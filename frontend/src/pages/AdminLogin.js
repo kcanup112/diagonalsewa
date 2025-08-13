@@ -1,15 +1,8 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
-import { 
-  FaUser, 
-  FaLock, 
-  FaEye, 
-  FaEyeSlash,
-  FaSpinner,
-  FaShieldAlt
-} from 'react-icons/fa';
+import { toast } from 'react-hot-toast';
+// Cleaned up admin login - removed unnecessary icon imports for cleaner design
 
 import { adminService } from '../services';
 import { useApp } from '../context/AppContext';
@@ -134,7 +127,7 @@ const AdminLogin = () => {
             animate={{ scale: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <FaShieldAlt className="w-16 h-16 text-primary-500 mx-auto mb-4" />
+            <span className="w-16 h-16 text-primary-500 mx-auto mb-4 flex items-center justify-center text-4xl">🛡️</span>
           </motion.div>
           <h2 className="text-3xl font-bold text-white mb-2">
             Admin Portal
@@ -167,7 +160,7 @@ const AdminLogin = () => {
                   placeholder="Enter your username"
                   autoComplete="username"
                 />
-                <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 flex items-center justify-center">👤</span>
               </div>
               {errors.username && (
                 <p className="text-red-500 text-sm mt-1">{errors.username}</p>
@@ -189,16 +182,16 @@ const AdminLogin = () => {
                   placeholder="Enter your password"
                   autoComplete="current-password"
                 />
-                <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 flex items-center justify-center">🔒</span>
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
                   {showPassword ? (
-                    <FaEyeSlash className="w-4 h-4" />
+                    <span className="w-4 h-4 flex items-center justify-center">🙈</span>
                   ) : (
-                    <FaEye className="w-4 h-4" />
+                    <span className="w-4 h-4 flex items-center justify-center">👁️</span>
                   )}
                 </button>
               </div>
@@ -236,12 +229,12 @@ const AdminLogin = () => {
             >
               {isLoggingIn ? (
                 <>
-                  <FaSpinner className="w-5 h-5 animate-spin" />
+                  <span className="w-5 h-5 animate-spin flex items-center justify-center">⏳</span>
                   <span>Signing in...</span>
                 </>
               ) : (
                 <>
-                  <FaShieldAlt className="w-5 h-5" />
+                  <span className="w-5 h-5 flex items-center justify-center">🛡️</span>
                   <span>Sign In</span>
                 </>
               )}

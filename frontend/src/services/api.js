@@ -73,6 +73,7 @@ api.interceptors.response.use(
 // Booking Services
 export const bookingService = {
   submit: (data) => api.post('/booking', data),
+  createBooking: (data) => api.post('/booking', data),
   getAll: () => api.get('/booking'),
   getById: (id) => api.get(`/booking/${id}`),
   update: (id, data) => api.put(`/booking/${id}`, data),
@@ -100,12 +101,51 @@ export const contactService = {
 // Admin Services
 export const adminService = {
   login: (credentials) => api.post('/admin/login', credentials),
+  getDashboard: () => api.get('/admin/dashboard'),
   getDashboardData: () => api.get('/admin/dashboard'),
   getBookings: (params) => api.get('/admin/bookings', { params }),
   getRepairs: (params) => api.get('/admin/repairs', { params }),
   getContacts: (params) => api.get('/admin/contacts', { params }),
+  getAppointment: (id) => api.get(`/admin/appointments/${id}`),
+  updateAppointmentStatus: (id, data) => api.put(`/admin/appointments/${id}/status`, data),
+  deleteAppointment: (id) => api.delete(`/admin/appointments/${id}`),
   updateBookingStatus: (id, status) => api.put(`/admin/bookings/${id}/status`, { status }),
   updateRepairStatus: (id, status) => api.put(`/admin/repairs/${id}/status`, { status })
+};
+
+// Team Services
+export const teamService = {
+  getAll: () => api.get('/team'),
+  getAllForAdmin: () => api.get('/team/admin'),
+  getById: (id) => api.get(`/team/${id}`),
+  create: (formData) => api.post('/team', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  }),
+  update: (id, formData) => api.put(`/team/${id}`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  }),
+  delete: (id) => api.delete(`/team/${id}`)
+};
+
+// Portfolio Services
+export const portfolioService = {
+  getAll: () => api.get('/portfolios'),
+  getById: (id) => api.get(`/portfolios/${id}`),
+  create: (formData) => api.post('/portfolios', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  }),
+  update: (id, formData) => api.put(`/portfolios/${id}`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  }),
+  delete: (id) => api.delete(`/portfolios/${id}`)
 };
 
 export default api;

@@ -349,6 +349,46 @@ router.put('/appointments/:id/status', authenticateAdmin, async (req, res) => {
 });
 
 /**
+ * GET /api/admin/appointments/:id
+ * Get appointment details by ID
+ */
+router.get('/appointments/:id', authenticateAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const appointment = await Appointment.findByPk(id, {
+      include: [
+        {
+          model: Service,
+          as: 'service',
+          attributes: ['name', 'description', 'category']
+        }
+      ]
+    });
+
+    if (!appointment) {
+      return res.status(404).json({
+        success: false,
+        message: 'Appointment not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      data: appointment
+    });
+
+  } catch (error) {
+    console.error('Get appointment error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve appointment details',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+    });
+  }
+});
+
+/**
  * GET /api/admin/export/appointments
  * Export appointments as CSV
  */

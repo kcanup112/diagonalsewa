@@ -5,6 +5,12 @@ const path = require('path');
 const fs = require('fs');
 
 const { Appointment, Service } = require('../models');
+const { bookingLimiter } = require('../utils/rateLimiting');
+const { 
+  advancedBookingLimiter, 
+  honeypotValidation,
+  timingProtection 
+} = require('../middleware/rateLimiter');
 
 const router = express.Router();
 
@@ -87,7 +93,14 @@ const bookingValidation = [
  * POST /api/booking
  * Create a new appointment booking
  */
-router.post('/', upload.array('images', 5), bookingValidation, async (req, res) => {
+router.post('/', 
+  bookingLimiter,             // Existing rate limiter (3 per hour)
+  timingProtection,           // Random delay to prevent timing attacks
+  honeypotValidation,         // Bot detection
+  advancedBookingLimiter,     // Advanced IP and phone limiting
+  upload.array('images', 5),  // File upload
+  bookingValidation,          // Input validation
+  async (req, res) => {
   try {
     // Check validation errors
     const errors = validationResult(req);

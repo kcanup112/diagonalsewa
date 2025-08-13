@@ -21,6 +21,7 @@ const Footer = () => {
     { name: '3D Design', href: '/design-construction', icon: FaCube },
     { name: 'Repair Services', href: '/repair-maintenance', icon: FaTools },
     { name: 'Contact Us', href: '/contact', icon: FaEnvelope },
+    {name: 'careers', href: '/careers', icon: FaHome },
   ];
 
   const services = [
@@ -58,27 +59,27 @@ const Footer = () => {
 
               {/* Social Links */}
               <div className="flex space-x-4">
-                <a
-                  href="#"
+                <button
+                  onClick={() => window.open("https://www.facebook.com/kcanup112", "_blank")}
                   className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-primary-600 transition-colors duration-200"
                   aria-label="Facebook"
                 >
                   <FaFacebook className="w-5 h-5" />
-                </a>
-                <a
-                  href="#"
+                </button>
+                <button
+                  onClick={() => window.open("https://www.facebook.com/kcanup112", "_blank")}
                   className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-primary-600 transition-colors duration-200"
                   aria-label="Instagram"
                 >
                   <FaInstagram className="w-5 h-5" />
-                </a>
-                <a
-                  href="#"
+                </button>
+                <button
+                  onClick={() => window.open("https://www.facebook.com/kcanup112", "_blank")}
                   className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-primary-600 transition-colors duration-200"
                   aria-label="LinkedIn"
                 >
                   <FaLinkedin className="w-5 h-5" />
-                </a>
+                </button>
               </div>
             </div>
 
@@ -120,13 +121,18 @@ const Footer = () => {
               <h3 className="text-lg font-heading font-semibold">Contact Info</h3>
               
               <div className="space-y-4">
-                <div className="flex items-start space-x-3">
-                  <FaMapMarkerAlt className="w-5 h-5 text-primary-400 mt-1 flex-shrink-0" />
+                <a
+                  href="https://www.google.com/maps/place/Diagonal+Group/@27.6715447,85.3388551,668m/data=!3m1!1e3!4m14!1m7!3m6!1s0x39eb1943930ad0dd:0x3141b7d0ce03519d!2sDiagonal+Group!8m2!3d27.6715447!4d85.34143!16s%2Fg%2F11j5zhqckt!3m5!1s0x39eb1943930ad0dd:0x3141b7d0ce03519d!8m2!3d27.6715447!4d85.34143!16s%2Fg%2F11j5zhqckt?entry=ttu&g_ep=EgoyMDI1MDgwMy4wIKXMDSoASAFQAw%3D%3D"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-start space-x-3 hover:bg-gray-800 p-2 rounded-lg transition-colors duration-200 group cursor-pointer"
+                >
+                  <FaMapMarkerAlt className="w-5 h-5 text-primary-400 mt-1 flex-shrink-0 group-hover:text-primary-300 transition-colors duration-200" />
                   <div>
-                    <p className="text-gray-300">Balkumari, Lalitpur</p>
-                    <p className="text-gray-400 text-sm">Nepal</p>
+                    <p className="text-gray-300 group-hover:text-white transition-colors duration-200">Balkumari, Lalitpur</p>
+                    <p className="text-gray-400 text-sm group-hover:text-gray-300 transition-colors duration-200">Nepal</p>
                   </div>
-                </div>
+                </a>
 
                 <div className="flex items-center space-x-3">
                   <FaPhone className="w-5 h-5 text-primary-400 flex-shrink-0" />
@@ -146,9 +152,8 @@ const Footer = () => {
               <div className="space-y-2">
                 <h4 className="font-medium text-white">Business Hours</h4>
                 <div className="text-sm text-gray-300 space-y-1">
-                  <p>Mon - Fri: 9:00 AM - 6:00 PM</p>
-                  <p>Saturday: 9:00 AM - 4:00 PM</p>
-                  <p>Sunday: Closed</p>
+                  <p>Sun - Fri: 10:00 AM - 6:00 PM</p>
+                  <p>Saturday: Closed</p>
                 </div>
               </div>
             </div>
@@ -180,7 +185,7 @@ const Footer = () => {
         <div className="border-t border-gray-800 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-gray-400 text-sm">
-              © {currentYear} Diagonal Construction. All rights reserved.
+              © {currentYear} Diagonal Enterprises. All rights reserved.
             </p>
             
             <div className="flex space-x-6 text-sm text-gray-400">

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
+import { toast } from 'react-hot-toast';
 import { 
   FaUsers, 
   FaCalendarCheck, 
@@ -13,11 +13,19 @@ import {
   FaEye,
   FaTrash,
   FaDownload,
-  FaPlus
+  FaPlus,
+  FaImage,
+  FaDownloadAlt
+  // FaGift // Removed since offers are disabled
 } from 'react-icons/fa';
 
 import { adminService } from '../services';
 import { useApp } from '../context/AppContext';
+import TeamManagement from '../components/admin/TeamManagement';
+import GalleryManagement from '../components/admin/GalleryManagement';
+import GalleryPhotoManagement from '../components/admin/GalleryPhotoManagement';
+import PortfolioManager from '../components/admin/PortfolioManager';
+// import OfferManagement from '../components/admin/OfferManagement'; // Disabled temporarily
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -115,6 +123,71 @@ const AdminDashboard = () => {
       'repair_maintenance': 'Repair & Maintenance'
     };
     return serviceMap[serviceType] || serviceType;
+  };
+
+  // Download functions
+  const downloadImage = async (imageUrl, fileName) => {
+    try {
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName || 'repair-image.jpg';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      toast.success('Image downloaded successfully');
+    } catch (error) {
+      console.error('Download error:', error);
+      toast.error('Failed to download image');
+    }
+  };
+
+  const downloadAllImages = async (images, customerName, bookingId) => {
+    if (!images || images.length === 0) {
+      toast.error('No images to download');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      
+      // Import JSZip dynamically
+      const JSZip = (await import('jszip')).default;
+      const zip = new JSZip();
+
+      const promises = images.map(async (imageUrl, index) => {
+        try {
+          const response = await fetch(imageUrl);
+          const blob = await response.blob();
+          const fileName = `image-${index + 1}.${blob.type.split('/')[1] || 'jpg'}`;
+          zip.file(fileName, blob);
+        } catch (error) {
+          console.error(`Failed to fetch image ${index + 1}:`, error);
+        }
+      });
+
+      await Promise.all(promises);
+
+      const zipBlob = await zip.generateAsync({ type: 'blob' });
+      const url = window.URL.createObjectURL(zipBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${customerName || 'repair'}-images-${bookingId || Date.now()}.zip`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      toast.success(`Downloaded ${images.length} images as ZIP file`);
+    } catch (error) {
+      console.error('Bulk download error:', error);
+      toast.error('Failed to download images');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleStatusUpdate = async (bookingId, newStatus) => {
@@ -245,6 +318,11 @@ const AdminDashboard = () => {
     { id: 'overview', label: 'Overview', icon: FaChartLine },
     { id: 'bookings', label: 'Bookings', icon: FaCalendarCheck },
     { id: 'repairs', label: 'Repairs', icon: FaTools },
+    { id: 'portfolio', label: 'Portfolio', icon: FaImage },
+    { id: 'gallery', label: 'Gallery', icon: FaImage },
+    { id: 'gallery-photos', label: 'Gallery Photos', icon: FaImage },
+    // { id: 'offers', label: 'Offer Management', icon: FaGift }, // Disabled temporarily
+    { id: 'team', label: 'Team Management', icon: FaUsers },
     { id: 'contacts', label: 'Messages', icon: FaEnvelope }
   ];
 
@@ -385,10 +463,10 @@ const AdminDashboard = () => {
                           onChange={(e) => handleStatusUpdate(booking.id, e.target.value)}
                           disabled={updatingStatus === booking.id}
                           className={`px-2 py-1 text-xs rounded-full border-0 font-medium ${
-                            booking.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                            booking.status === 'confirmed' ? 'bg-blue-100 text-blue-800' :
-                            booking.status === 'in_progress' ? 'bg-purple-100 text-purple-800' :
-                            booking.status === 'completed' ? 'bg-green-100 text-green-800' :
+                            booking.status === 'pending' ? 'bg-accent-100 text-accent-800' :
+                            booking.status === 'confirmed' ? 'bg-primary-100 text-primary-800' :
+                            booking.status === 'in_progress' ? 'bg-secondary-100 text-secondary-800' :
+                            booking.status === 'completed' ? 'bg-secondary-100 text-secondary-800' :
                             'bg-gray-100 text-gray-800'
                           } ${updatingStatus === booking.id ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:shadow-md'}`}
                         >
@@ -441,6 +519,23 @@ const AdminDashboard = () => {
                         {repair.message && (
                           <p className="text-xs text-gray-600 mt-1">{repair.message}</p>
                         )}
+                        {/* Mini Photo Indicators */}
+                        {repair.images && repair.images.length > 0 && (
+                          <div className="flex items-center justify-between mt-1">
+                            <div className="flex items-center space-x-1">
+                              <span className="text-xs text-blue-600">📸</span>
+                              <span className="text-xs text-blue-600 font-medium">{repair.images.length} photo{repair.images.length > 1 ? 's' : ''}</span>
+                            </div>
+                            <button
+                              onClick={() => downloadAllImages(repair.images, repair.name, repair.id)}
+                              className="text-xs bg-blue-50 text-blue-600 px-1 py-0.5 rounded hover:bg-blue-100 transition-colors"
+                              title="Download all images"
+                              disabled={isLoading}
+                            >
+                              <FaDownload className="w-2.5 h-2.5" />
+                            </button>
+                          </div>
+                        )}
                       </div>
                       <div className="flex items-center space-x-2">
                         <select
@@ -448,10 +543,10 @@ const AdminDashboard = () => {
                           onChange={(e) => handleStatusUpdate(repair.id, e.target.value)}
                           disabled={updatingStatus === repair.id}
                           className={`px-2 py-1 text-xs rounded-full border-0 font-medium ${
-                            repair.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                            repair.status === 'confirmed' ? 'bg-blue-100 text-blue-800' :
-                            repair.status === 'in_progress' ? 'bg-purple-100 text-purple-800' :
-                            repair.status === 'completed' ? 'bg-green-100 text-green-800' :
+                            repair.status === 'pending' ? 'bg-accent-100 text-accent-800' :
+                            repair.status === 'confirmed' ? 'bg-primary-100 text-primary-800' :
+                            repair.status === 'in_progress' ? 'bg-secondary-100 text-secondary-800' :
+                            repair.status === 'completed' ? 'bg-secondary-100 text-secondary-800' :
                             'bg-gray-100 text-gray-800'
                           } ${updatingStatus === repair.id ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:shadow-md'}`}
                         >
@@ -569,10 +664,10 @@ const AdminDashboard = () => {
                             onChange={(e) => handleStatusUpdate(booking.id, e.target.value)}
                             disabled={updatingStatus === booking.id}
                             className={`px-2 py-1 text-xs rounded-full border-0 font-medium ${
-                              booking.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                              booking.status === 'confirmed' ? 'bg-blue-100 text-blue-800' :
-                              booking.status === 'in_progress' ? 'bg-purple-100 text-purple-800' :
-                              booking.status === 'completed' ? 'bg-green-100 text-green-800' :
+                              booking.status === 'pending' ? 'bg-accent-100 text-accent-800' :
+                              booking.status === 'confirmed' ? 'bg-primary-100 text-primary-800' :
+                              booking.status === 'in_progress' ? 'bg-secondary-100 text-secondary-800' :
+                              booking.status === 'completed' ? 'bg-secondary-100 text-secondary-800' :
                               'bg-gray-100 text-gray-800'
                             } ${updatingStatus === booking.id ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:shadow-md'}`}
                           >
@@ -647,6 +742,51 @@ const AdminDashboard = () => {
                         {repair.message && (
                           <p className="text-sm text-gray-500 mb-2">{repair.message}</p>
                         )}
+                        
+                        {/* Photos Section */}
+                        {repair.images && repair.images.length > 0 && (
+                          <div className="mb-3">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="text-xs font-medium text-gray-700">📸 Uploaded Photos ({repair.images.length})</span>
+                              <div className="flex space-x-1">
+                                <button
+                                  onClick={() => downloadAllImages(repair.images, repair.name, repair.id)}
+                                  className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded hover:bg-green-200 transition-colors flex items-center space-x-1"
+                                  title="Download all images as ZIP"
+                                  disabled={isLoading}
+                                >
+                                  <FaDownload className="w-3 h-3" />
+                                  <span>All</span>
+                                </button>
+                              </div>
+                            </div>
+                            <div className="flex space-x-2 overflow-x-auto pb-2">
+                              {repair.images.slice(0, 3).map((photo, photoIndex) => (
+                                <div key={photoIndex} className="relative flex-shrink-0 group">
+                                  <img
+                                    src={photo}
+                                    alt={`Repair documentation ${photoIndex + 1}`}
+                                    className="w-16 h-16 object-cover rounded-lg border border-gray-200 cursor-pointer hover:shadow-md transition-shadow"
+                                    onClick={() => window.open(photo, '_blank')}
+                                  />
+                                  <button
+                                    onClick={() => downloadImage(photo, `repair-${repair.id}-image-${photoIndex + 1}.jpg`)}
+                                    className="absolute top-0 right-0 bg-blue-600 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg transform translate-x-1 -translate-y-1"
+                                    title="Download this image"
+                                  >
+                                    <FaDownload className="w-2 h-2" />
+                                  </button>
+                                </div>
+                              ))}
+                              {repair.images.length > 3 && (
+                                <div className="w-16 h-16 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center flex-shrink-0">
+                                  <span className="text-xs text-gray-500 font-medium">+{repair.images.length - 3}</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                        
                         <div className="flex items-center space-x-4 mt-3 text-xs text-gray-500">
                           <span>📞 {repair.phone}</span>
                           {repair.email && <span>📧 {repair.email}</span>}
@@ -676,8 +816,14 @@ const AdminDashboard = () => {
                         <button 
                           className="btn-outline text-sm"
                           title="View Details"
+                          onClick={() => handleViewDetails(repair)}
+                          disabled={viewDetailsLoading}
                         >
-                          View Details
+                          {viewDetailsLoading ? (
+                            <div className="animate-spin rounded-full h-4 w-4 border-2 border-primary-300 border-t-primary-600"></div>
+                          ) : (
+                            'View Details'
+                          )}
                         </button>
                         <button 
                           onClick={() => handleDeleteConfirm(repair)}
@@ -700,6 +846,27 @@ const AdminDashboard = () => {
               </div>
             </div>
           )}
+
+          {activeTab === 'team' && (
+            <TeamManagement />
+          )}
+
+          {activeTab === 'portfolio' && (
+            <PortfolioManager />
+          )}
+
+          {activeTab === 'gallery' && (
+            <GalleryManagement />
+          )}
+
+          {activeTab === 'gallery-photos' && (
+            <GalleryPhotoManagement />
+          )}
+
+          {/* Offers tab disabled temporarily */}
+          {/* {activeTab === 'offers' && (
+            <OfferManagement />
+          )} */}
 
           {activeTab === 'contacts' && (
             <div className="card">
@@ -816,7 +983,17 @@ const AdminDashboard = () => {
               {/* Photos Section */}
               {selectedBooking.images && selectedBooking.images.length > 0 && (
                 <div>
-                  <h4 className="text-md font-semibold text-gray-900 mb-3">Photos ({selectedBooking.images.length})</h4>
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="text-md font-semibold text-gray-900">Photos ({selectedBooking.images.length})</h4>
+                    <button
+                      onClick={() => downloadAllImages(selectedBooking.images, selectedBooking.name, selectedBooking.id)}
+                      className="btn-primary text-sm flex items-center space-x-2"
+                      disabled={isLoading}
+                    >
+                      <FaDownload className="w-4 h-4" />
+                      <span>Download All Images</span>
+                    </button>
+                  </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {selectedBooking.images.map((photo, index) => (
                       <div key={index} className="relative group">
@@ -827,9 +1004,16 @@ const AdminDashboard = () => {
                           onClick={() => window.open(photo, '_blank')}
                         />
                         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all rounded-lg flex items-center justify-center">
-                          <svg className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-                          </svg>
+                          <button
+                            onClick={() => downloadImage(photo, `${selectedBooking.name}-image-${index + 1}.jpg`)}
+                            className="bg-white text-gray-800 p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-gray-100"
+                            title="Download this image"
+                          >
+                            <FaDownload className="w-4 h-4" />
+                          </button>
+                        </div>
+                        <div className="absolute top-2 right-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
+                          {index + 1} / {selectedBooking.images.length}
                         </div>
                       </div>
                     ))}

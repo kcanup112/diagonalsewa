@@ -9,6 +9,9 @@ const { sequelize } = require('./models');
 const bookingRoutes = require('./routes/booking');
 const calculatorRoutes = require('./routes/calculator');
 const adminRoutes = require('./routes/admin');
+const offersRoutes = require('./routes/offers');
+const galleryRoutes = require('./routes/gallery');
+const portfolioRoutes = require('./routes/portfolios');
 
 // Import new utilities
 const logger = require('./utils/logger');
@@ -18,6 +21,9 @@ const { healthCheck } = require('./utils/database');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Trust proxy for proper IP detection
+app.set('trust proxy', 1);
 
 // Middleware
 app.use(helmet());
@@ -45,10 +51,20 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Static files for uploaded images
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Static files for portfolio uploads
+app.use('/uploads/portfolios', express.static(path.join(__dirname, 'public/uploads/portfolios')));
+
+// Static files for frontend images
+app.use('/images', express.static(path.join(__dirname, '../frontend/public/images')));
+
 // Routes
 app.use('/api/booking', bookingRoutes);
 app.use('/api/calculator', calculatorRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/offers', offersRoutes);
+app.use('/api/gallery', galleryRoutes);
+app.use('/api/portfolios', portfolioRoutes);
+app.use('/api/team', require('./routes/team'));
 
 // Health check endpoint with database status
 app.get('/api/health', async (req, res) => {

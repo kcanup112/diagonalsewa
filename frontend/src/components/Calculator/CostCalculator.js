@@ -1,13 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import toast from 'react-hot-toast';
-import { 
-  FaCalculator, 
-  FaHome, 
-  FaChartPie,
-  FaCog,
-  FaSpinner
-} from 'react-icons/fa';
+import { toast } from 'react-hot-toast';
+// Cleaned up cost calculator - removed unnecessary icon imports for cleaner design
 
 import { calculatorService } from '../../services';
 import { useApp } from '../../context/AppContext';
@@ -244,7 +238,7 @@ const CostCalculator = ({ onCalculationComplete = null }) => {
         <form onSubmit={handleCalculate} className="space-y-6">
           {/* Header */}
           <div className="flex items-center space-x-3 pb-4 border-b border-gray-200">
-            <FaCalculator className="w-6 h-6 text-primary-600" />
+            <span className="w-6 h-6 text-primary-600 flex items-center justify-center">🧮</span>
             <h3 className="text-xl font-semibold text-gray-900">
               Construction Cost Calculator
             </h3>
@@ -319,7 +313,7 @@ const CostCalculator = ({ onCalculationComplete = null }) => {
                     </div>
                     {formData.floors === option.value && (
                       <div className="text-accent-600">
-                        <FaHome className="w-4 h-4" />
+                        <span className="w-4 h-4 flex items-center justify-center">🏠</span>
                       </div>
                     )}
                   </div>
@@ -374,7 +368,7 @@ const CostCalculator = ({ onCalculationComplete = null }) => {
                     </div>
                     {formData.quality === option.value && (
                       <div className="text-primary-600">
-                        <FaChartPie className="w-5 h-5" />
+                        <span className="w-5 h-5 flex items-center justify-center">📊</span>
                       </div>
                     )}
                   </div>
@@ -423,7 +417,7 @@ const CostCalculator = ({ onCalculationComplete = null }) => {
                     </div>
                     {formData.project_type === type.value && (
                       <div className="text-secondary-600">
-                        <FaHome className="w-5 h-5" />
+                        <span className="w-5 h-5 flex items-center justify-center">🏠</span>
                       </div>
                     )}
                   </div>
@@ -487,12 +481,12 @@ const CostCalculator = ({ onCalculationComplete = null }) => {
           >
             {isCalculating ? (
               <>
-                <FaSpinner className="w-5 h-5 animate-spin" />
+                <span className="w-5 h-5 animate-spin flex items-center justify-center">⏳</span>
                 <span>Calculating...</span>
               </>
             ) : (
               <>
-                <FaCog className="w-5 h-5" />
+                <span className="w-5 h-5 flex items-center justify-center">⚙️</span>
                 <span>Calculate Detailed Cost & Timeline</span>
               </>
             )}
@@ -500,47 +494,48 @@ const CostCalculator = ({ onCalculationComplete = null }) => {
         </form>
       </motion.div>
 
-      {/* Information Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <motion.div 
-          className="card text-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-        >
-          <FaChartPie className="w-12 h-12 text-primary-600 mx-auto mb-4" />
-          <h4 className="font-semibold text-gray-900 mb-2">Detailed Breakdown</h4>
-          <p className="text-sm text-gray-600">
-            Get detailed cost breakdown for materials, labor, and other expenses
-          </p>
-        </motion.div>
-
-        <motion.div 
-          className="card text-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <FaHome className="w-12 h-12 text-secondary-600 mx-auto mb-4" />
-          <h4 className="font-semibold text-gray-900 mb-2">Project Timeline</h4>
-          <p className="text-sm text-gray-600">
-            View phase-wise construction timeline with milestones and duration
-          </p>
-        </motion.div>
-
-        <motion.div 
-          className="card text-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-        >
-          <FaCalculator className="w-12 h-12 text-accent-600 mx-auto mb-4" />
-          <h4 className="font-semibold text-gray-900 mb-2">Accurate Rates</h4>
-          <p className="text-sm text-gray-600">
-            Based on current Nepalese construction market rates and material costs
-          </p>
-        </motion.div>
-      </div>
+      {/* Booking Link */}
+      <motion.div 
+        className="text-center"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.1 }}
+      >
+        <div className="card bg-gradient-to-r from-primary-50 to-secondary-50 border-primary-200">
+          <div className="text-center space-y-4">
+            <span className="w-16 h-16 text-primary-600 mx-auto flex items-center justify-center text-4xl">🏠</span>
+            <h4 className="text-xl font-semibold text-gray-900">
+              Ready to Start Your Project?
+            </h4>
+            <p className="text-gray-600 max-w-md mx-auto">
+              Get a detailed quote and professional consultation for your construction project. 
+              Book an appointment with our expert team today.
+            </p>
+            <button
+              onClick={() => {
+                // Try multiple ways to navigate to booking
+                const bookingSection = document.querySelector('#booking');
+                const bookingTab = document.querySelector('[data-tab="booking"]');
+                
+                if (bookingSection) {
+                  // If booking section exists, scroll to it
+                  bookingSection.scrollIntoView({ behavior: 'smooth' });
+                } else if (bookingTab) {
+                  // If booking tab exists, click it
+                  bookingTab.click();
+                } else {
+                  // Navigate to design-construction page with booking tab
+                  window.location.href = '/design-construction?tab=booking';
+                }
+              }}
+              className="btn-primary inline-flex items-center space-x-2"
+            >
+              <span className="w-5 h-5 flex items-center justify-center">🏠</span>
+              <span>Book Consultation</span>
+            </button>
+          </div>
+        </div>
+      </motion.div>
 
       {/* Disclaimer */}
       <motion.div 

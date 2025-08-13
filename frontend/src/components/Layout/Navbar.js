@@ -1,152 +1,635 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { 
   FaBars, 
   FaTimes, 
   FaHome, 
-  FaCube, 
+  FaCube,
   FaTools, 
+  FaImages,
   FaEnvelope,
-  FaPhone,
-  FaMapMarkerAlt
+  FaBuilding,
+  FaUsers
 } from 'react-icons/fa';
+import DiagonalLogo from '../../assets/images/diagonal-logo.svg';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isNavHovered, setIsNavHovered] = useState(false);
   const location = useLocation();
+  const { scrollY } = useScroll();
+  
+  // Transform values for scroll-based animations
+  const navbarY = useTransform(scrollY, [0, 100], [0, -10]);
+  const navbarOpacity = useTransform(scrollY, [0, 50], [1, 0.95]);
+  
+  // Handle scroll effects
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const navigation = [
-    { name: 'Home', href: '/', icon: FaHome },
-    { name: '3D Design & Construction', href: '/design-construction', icon: FaCube },
-    { name: 'Repair & Maintenance', href: '/repair-maintenance', icon: FaTools },
-    { name: 'Contact', href: '/contact', icon: FaEnvelope },
+    { 
+      name: 'Home', 
+      shortName: 'Home', 
+      href: '/', 
+      icon: FaHome 
+    },
+    { 
+      name: 'Repair & Maintenance', 
+      shortName: 'Repair', 
+      href: '/repair-maintenance', 
+      icon: FaTools 
+    },
+    { 
+      name: '3D Design & Construction', 
+      shortName: 'Design', 
+      href: '/design-construction', 
+      icon: FaCube
+    },
+    { 
+      name: 'Real Estate', 
+      shortName: 'Estate', 
+      href: 'https://www.diagonalhomes.com', 
+      icon: FaBuilding, 
+      external: true 
+    },
+    { 
+      name: 'Gallery', 
+      shortName: 'Gallery', 
+      href: '/gallery', 
+      icon: FaImages 
+    },
+    { 
+      name: 'About Team', 
+      shortName: 'About', 
+      href: '/about-team', 
+      icon: FaUsers 
+    },
+    { 
+      name: 'Contact', 
+      shortName: 'Contact', 
+      href: '/contact', 
+      icon: FaEnvelope 
+    },
   ];
 
   const isActive = (path) => location.pathname === path;
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
+  const handleNavClick = (item) => {
+    if (item.external) {
+      window.open(item.href, '_blank', 'noopener,noreferrer');
+    } else if (item.scroll) {
+      const element = document.querySelector(item.href);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+    // For internal links, let React Router handle it
+  };
+
+  // Animation variants
+  const navbarVariants = {
+    initial: { y: -100, opacity: 0 },
+    animate: { 
+      y: 0, 
+      opacity: 1,
+      transition: { 
+        duration: 0.6,
+        ease: "easeOut"
+      }
+    }
+  };
+
+  const logoVariants = {
+    initial: { scale: 1, rotate: 0 },
+    hover: { 
+      scale: 1.1, 
+      rotate: 360,
+      transition: { 
+        duration: 0.6,
+        ease: "easeInOut"
+      }
+    },
+    tap: { scale: 0.95 }
+  };
+
+  const linkVariants = {
+    initial: { y: 0 },
+    hover: { 
+      y: -2,
+      transition: { 
+        duration: 0.2,
+        ease: "easeOut"
+      }
+    }
+  };
+
+  const mobileMenuVariants = {
+    initial: { opacity: 0, y: -20 },
+    animate: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        duration: 0.3,
+        when: "beforeChildren",
+        staggerChildren: 0.1
+      }
+    },
+    exit: { 
+      opacity: 0, 
+      y: -20,
+      transition: {
+        duration: 0.2
+      }
+    }
+  };
+
+  const mobileItemVariants = {
+    initial: { opacity: 0, x: -20 },
+    animate: { 
+      opacity: 1, 
+      x: 0,
+      transition: { duration: 0.3 }
+    }
+  };
+
   return (
-    <nav className="bg-white shadow-lg sticky top-0 z-50">
-      <div className="container-custom">
-        <div className="flex justify-between items-center py-4">
-          {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-gradient-diagonal rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xl">D</span>
-            </div>
-            <div>
-              <h1 className="text-xl font-heading font-bold text-gray-900">Diagonal</h1>
-              <p className="text-xs text-gray-600">Construction</p>
-            </div>
-          </Link>
-
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-8">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                to={item.href}
-                className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 ${
-                  isActive(item.href)
-                    ? 'text-primary-600 bg-primary-50'
-                    : 'text-gray-700 hover:text-primary-600 hover:bg-gray-50'
-                }`}
-              >
-                <item.icon className="w-4 h-4" />
-                <span>{item.name}</span>
-              </Link>
-            ))}
-          </div>
-
-          {/* Contact Info & CTA */}
-          <div className="hidden lg:flex items-center space-x-6">
-            <div className="flex items-center space-x-4 text-sm text-gray-600">
-              <div className="flex items-center space-x-1">
-                <FaPhone className="w-3 h-3" />
-                <span>9851023395</span>
-              </div>
-              <div className="flex items-center space-x-1">
-                <FaMapMarkerAlt className="w-3 h-3" />
-                <span>Balkumari, Lalitpur</span>
-              </div>
-            </div>
-            <Link
-              to="/design-construction"
-              className="btn-primary"
-            >
-              Get Quote
-            </Link>
-          </div>
-
-          {/* Mobile menu button */}
-          <button
-            onClick={toggleMenu}
-            className="lg:hidden p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors duration-200"
-            aria-label="Toggle menu"
+    <motion.nav 
+      variants={navbarVariants}
+      initial="initial"
+      animate="animate"
+      style={{ y: navbarY, opacity: navbarOpacity }}
+      onMouseEnter={() => setIsNavHovered(true)}
+      onMouseLeave={() => setIsNavHovered(false)}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ease-out ${
+        isScrolled 
+          ? 'bg-white/95 backdrop-blur-md shadow-xl border-b border-white/20' 
+          : 'bg-white shadow-lg'
+      }`}
+    >
+      <div className="container mx-auto px-4">
+        <div className={`flex items-center transition-all duration-500 ease-out ${
+          isScrolled && !isNavHovered ? 'justify-center py-2' : 'justify-between py-4'
+        }`}>
+          {/* Company Logo and Brand - Smooth fade and slide */}
+          <motion.div
+            animate={{ 
+              opacity: (isScrolled && !isNavHovered) ? 0 : 1,
+              x: (isScrolled && !isNavHovered) ? -200 : 0,
+              scale: (isScrolled && !isNavHovered) ? 0.8 : 1
+            }}
+            transition={{ 
+              duration: 0.5, 
+              ease: [0.4, 0, 0.2, 1] // Synchronized easing
+            }}
+            className={`${(isScrolled && !isNavHovered) ? 'absolute pointer-events-none' : ''} origin-left`}
           >
-            {isOpen ? <FaTimes className="w-6 h-6" /> : <FaBars className="w-6 h-6" />}
-          </button>
+            <Link to="/" className="flex items-center space-x-3 group">
+              <motion.div 
+                variants={logoVariants}
+                initial="initial"
+                whileHover="hover"
+                whileTap="tap"
+                className="relative w-12 h-12 flex items-center justify-center overflow-hidden"
+              >
+                <img 
+                  src={DiagonalLogo} 
+                  alt="Diagonal Enterprises Logo" 
+                  className="w-full h-full object-contain"
+                />
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="ml-1"
+              >
+                <motion.h1 
+                  className="text-2xl font-heading font-bold text-gray-900 group-hover:text-primary-600 transition-colors duration-200 leading-tight font-display tracking-tight"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  Diagonal Enterprises
+                </motion.h1>
+                <motion.p 
+                  className="text-sm text-gray-600 group-hover:text-primary-500 transition-colors duration-200 -mt-1 font-ui"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.4 }}
+                >
+                  Infrastructure Construction
+                </motion.p>
+              </motion.div>
+            </Link>
+          </motion.div>
+
+          {/* Innovative Smart Navigation */}
+          <div className={`hidden lg:flex items-center transition-all duration-500 ease-out ${
+            isScrolled && !isNavHovered ? 'space-x-0.5' : 'space-x-1'
+          }`}>
+            {navigation.map((item, index) => {
+              const isItemActive = isActive(item.href);
+              const showFullText = !isScrolled || isNavHovered;
+              const displayText = showFullText ? item.name : item.shortName;
+              
+              return (
+                <motion.div
+                  key={item.name}
+                  variants={linkVariants}
+                  initial="initial"
+                  whileHover="hover"
+                  custom={index}
+                  className="relative"
+                >
+                  {item.external || item.scroll ? (
+                    <motion.button
+                      onClick={() => handleNavClick(item)}
+                      layout
+                      className={`relative flex items-center justify-center rounded-xl font-bold transition-all duration-300 ease-out group overflow-hidden ${
+                        (isScrolled && !isNavHovered) ? 'px-2 py-1.5 text-sm' : 'px-4 py-2.5 text-base'
+                      } ${
+                        isItemActive && !item.external && !item.scroll
+                          ? 'text-white bg-gradient-to-r from-primary-500 to-secondary-500 shadow-lg shadow-primary-500/25'
+                          : 'text-gray-700 hover:text-primary-600 hover:bg-gradient-to-r hover:from-primary-50 hover:to-secondary-50'
+                      }`}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      transition={{ 
+                        layout: { duration: 0.3, ease: "easeInOut" },
+                        scale: { duration: 0.15 }
+                      }}
+                    >
+                      {/* Active background with smooth morphing */}
+                      {isItemActive && !item.external && !item.scroll && (
+                        <motion.div
+                          layoutId="activeNavBg"
+                          className="absolute inset-0 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-xl"
+                          transition={{ 
+                            type: "spring", 
+                            stiffness: 400, 
+                            damping: 30
+                          }}
+                        />
+                      )}
+                      
+                      {/* Icon with subtle animation */}
+                      <motion.div
+                        className="relative z-10 flex-shrink-0"
+                        animate={{
+                          scale: (isScrolled && !isNavHovered) ? 1.05 : 1,
+                        }}
+                        whileHover={{ scale: 1.1 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <item.icon className={`w-4 h-4 ${isItemActive && !item.external && !item.scroll ? 'text-white' : ''}`} />
+                      </motion.div>
+                      
+                      {/* Smooth text animation */}
+                      <motion.div
+                        className="relative z-10 overflow-hidden whitespace-nowrap"
+                        animate={{
+                          width: showFullText ? 'auto' : '0px',
+                          marginLeft: showFullText ? '8px' : '0px',
+                          opacity: showFullText ? 1 : 0,
+                        }}
+                        transition={{ 
+                          duration: 0.3, 
+                          ease: "easeInOut"
+                        }}
+                      >
+                        <span className="block">
+                          {displayText}
+                        </span>
+                      </motion.div>
+                      
+                      {/* External link indicator */}
+                      {item.external && showFullText && (
+                        <motion.div
+                          className="relative z-10 ml-1 flex-shrink-0"
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ duration: 0.2, delay: 0.1 }}
+                          whileHover={{ scale: 1.1 }}
+                        >
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          </svg>
+                        </motion.div>
+                      )}
+                      
+                      {/* Enhanced hover underline */}
+                      <motion.div
+                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full"
+                        initial={{ scaleX: 0 }}
+                        whileHover={{ scaleX: isItemActive && !item.external && !item.scroll ? 0 : 1 }}
+                        transition={{ duration: 0.2 }}
+                      />
+                    </motion.button>
+                  ) : (
+                    <Link
+                      to={item.href}
+                      className={`relative flex items-center justify-center rounded-xl font-bold transition-all duration-300 ease-out group overflow-hidden ${
+                        (isScrolled && !isNavHovered) ? 'px-2 py-1.5 text-sm' : 'px-4 py-2.5 text-base'
+                      } ${
+                        isItemActive
+                          ? 'text-white bg-gradient-to-r from-primary-500 to-secondary-500 shadow-lg shadow-primary-500/25'
+                          : 'text-gray-700 hover:text-primary-600 hover:bg-gradient-to-r hover:from-primary-50 hover:to-secondary-50'
+                      }`}
+                    >
+                      <motion.div
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="flex items-center relative z-10"
+                        transition={{ duration: 0.15 }}
+                      >
+                        {/* Active background with smooth morphing */}
+                        {isItemActive && (
+                          <motion.div
+                            layoutId="activeNavBg"
+                            className="absolute inset-0 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-xl -z-10"
+                            transition={{ 
+                              type: "spring", 
+                              stiffness: 400, 
+                              damping: 30
+                            }}
+                          />
+                        )}
+                        
+                        {/* Icon with subtle animation */}
+                        <motion.div
+                          className="flex-shrink-0"
+                          animate={{
+                            scale: (isScrolled && !isNavHovered) ? 1.05 : 1,
+                          }}
+                          whileHover={{ scale: 1.1 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <item.icon className={`w-4 h-4 ${isItemActive ? 'text-white' : ''}`} />
+                        </motion.div>
+                        
+                        {/* Smooth text animation */}
+                        <motion.div
+                          className="overflow-hidden whitespace-nowrap"
+                          animate={{
+                            width: showFullText ? 'auto' : '0px',
+                            marginLeft: showFullText ? '8px' : '0px',
+                            opacity: showFullText ? 1 : 0,
+                          }}
+                          transition={{ 
+                            duration: 0.3, 
+                            ease: "easeInOut"
+                          }}
+                        >
+                          <span className="block">
+                            {displayText}
+                          </span>
+                        </motion.div>
+                      </motion.div>
+                      
+                      {/* Enhanced hover underline */}
+                      <motion.div
+                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full"
+                        initial={{ scaleX: 0 }}
+                        whileHover={{ scaleX: isItemActive ? 0 : 1 }}
+                        transition={{ duration: 0.2 }}
+                      />
+                    </Link>
+                  )}
+                </motion.div>
+              );
+            })}
+          </div>
+
+          {/* Enhanced Mobile menu button */}
+          <motion.div
+            animate={{
+              opacity: (isScrolled && !isNavHovered) ? 0 : 1,
+              x: (isScrolled && !isNavHovered) ? 200 : 0,
+              scale: (isScrolled && !isNavHovered) ? 0.8 : 1
+            }}
+            transition={{ 
+              duration: 0.5, 
+              ease: [0.4, 0, 0.2, 1]
+            }}
+            className={`lg:hidden ${(isScrolled && !isNavHovered) ? 'absolute pointer-events-none' : ''} origin-right`}
+          >
+            <motion.button
+              onClick={toggleMenu}
+              className="relative p-3 rounded-xl text-gray-600 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 transition-all duration-300 group"
+              aria-label="Toggle menu"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              transition={{ duration: 0.2 }}
+            >
+              {/* Animated background */}
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-xl opacity-0 group-hover:opacity-10 transition-opacity duration-300"
+              />
+              
+              <AnimatePresence mode="wait">
+                {isOpen ? (
+                  <motion.div
+                    key="close"
+                    initial={{ rotate: -90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: 90, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <FaTimes className="w-6 h-6 relative z-10" />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="menu"
+                    initial={{ rotate: 90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: -90, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <FaBars className="w-6 h-6 relative z-10" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              
+              {/* Enhanced pulse effect */}
+              <motion.div
+                className="absolute inset-0 rounded-xl border-2 border-primary-500 opacity-0"
+                animate={isOpen ? { 
+                  scale: [1, 1.3, 1],
+                  opacity: [0.6, 0, 0.6]
+                } : {}}
+                transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
+              />
+            </motion.button>
+          </motion.div>
         </div>
       </div>
 
-      {/* Mobile Navigation */}
+      {/* Enhanced Mobile Navigation */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-            className="lg:hidden bg-white border-t border-gray-200"
+            variants={mobileMenuVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="lg:hidden bg-white/95 backdrop-blur-md border-t border-gray-200/50 shadow-xl"
           >
-            <div className="px-4 py-4 space-y-2">
-              {navigation.map((item) => (
-                <Link
+            <div className="px-4 py-6 space-y-2">
+              {navigation.map((item, index) => (
+                <motion.div
                   key={item.name}
-                  to={item.href}
-                  onClick={() => setIsOpen(false)}
-                  className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200 ${
-                    isActive(item.href)
-                      ? 'text-primary-600 bg-primary-50'
-                      : 'text-gray-700 hover:text-primary-600 hover:bg-gray-50'
-                  }`}
+                  variants={mobileItemVariants}
+                  custom={index}
                 >
-                  <item.icon className="w-5 h-5" />
-                  <span>{item.name}</span>
-                </Link>
+                  {item.external || item.scroll ? (
+                    <button
+                      onClick={() => {
+                        handleNavClick(item);
+                        setIsOpen(false);
+                      }}
+                      className={`relative flex items-center space-x-3 px-4 py-4 rounded-xl text-base font-medium transition-all duration-300 group overflow-hidden w-full text-left ${
+                        isActive(item.href) && !item.external && !item.scroll
+                          ? 'text-white bg-gradient-to-r from-primary-500 to-secondary-500 shadow-lg'
+                          : 'text-gray-700 hover:text-primary-600 hover:bg-gradient-to-r hover:from-primary-50 hover:to-secondary-50'
+                      }`}
+                    >
+                      {/* Animated background for active item */}
+                      {isActive(item.href) && !item.external && !item.scroll && (
+                        <motion.div
+                          className="absolute inset-0 bg-gradient-to-r from-primary-500 to-secondary-500"
+                          initial={{ x: "-100%" }}
+                          animate={{ x: "0%" }}
+                          transition={{ duration: 0.5, delay: index * 0.1 }}
+                        />
+                      )}
+                      
+                      {/* Hover background */}
+                      <motion.div
+                        className="absolute inset-0 bg-gradient-to-r from-primary-100 to-secondary-100 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        initial={{ scale: 0 }}
+                        whileHover={{ scale: 1 }}
+                        transition={{ duration: 0.3 }}
+                      />
+                      
+                      {/* Icon with animation */}
+                      <motion.div
+                        className="relative z-10"
+                        initial={{ rotate: 0 }}
+                        whileHover={{ rotate: 360, scale: 1.2 }}
+                        transition={{ duration: 0.5 }}
+                      >
+                        <item.icon className={`w-5 h-5 ${isActive(item.href) && !item.external && !item.scroll ? 'text-white' : ''}`} />
+                      </motion.div>
+                      
+                      {/* Text with slide effect */}
+                      <motion.span 
+                        className="relative z-10"
+                        initial={{ x: 0 }}
+                        whileHover={{ x: 5 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        {item.displayName || item.name}
+                      </motion.span>
+                      
+                      {/* External link indicator */}
+                      {item.external && (
+                        <motion.div
+                          className="relative z-10 ml-1"
+                          initial={{ scale: 0 }}
+                          whileHover={{ scale: 1 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          </svg>
+                        </motion.div>
+                      )}
+                      
+                      {/* Arrow indicator */}
+                      <motion.div
+                        className={`ml-auto relative z-10 ${isActive(item.href) && !item.external && !item.scroll ? 'text-white' : 'text-primary-500'}`}
+                        initial={{ x: -10, opacity: 0 }}
+                        whileHover={{ x: 0, opacity: 1 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        →
+                      </motion.div>
+                    </button>
+                  ) : (
+                    <Link
+                      to={item.href}
+                      onClick={() => setIsOpen(false)}
+                      className={`relative flex items-center space-x-3 px-4 py-4 rounded-xl text-base font-medium transition-all duration-300 group overflow-hidden ${
+                        isActive(item.href)
+                          ? 'text-white bg-gradient-to-r from-primary-500 to-secondary-500 shadow-lg'
+                          : 'text-gray-700 hover:text-primary-600 hover:bg-gradient-to-r hover:from-primary-50 hover:to-secondary-50'
+                      }`}
+                    >
+                      {/* Animated background for active item */}
+                      {isActive(item.href) && (
+                        <motion.div
+                          className="absolute inset-0 bg-gradient-to-r from-primary-500 to-secondary-500"
+                          initial={{ x: "-100%" }}
+                          animate={{ x: "0%" }}
+                          transition={{ duration: 0.5, delay: index * 0.1 }}
+                        />
+                      )}
+                      
+                      {/* Hover background */}
+                      <motion.div
+                        className="absolute inset-0 bg-gradient-to-r from-primary-100 to-secondary-100 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        initial={{ scale: 0 }}
+                        whileHover={{ scale: 1 }}
+                        transition={{ duration: 0.3 }}
+                      />
+                      
+                      {/* Icon with animation */}
+                      <motion.div
+                        className="relative z-10"
+                        initial={{ rotate: 0 }}
+                        whileHover={{ rotate: 360, scale: 1.2 }}
+                        transition={{ duration: 0.5 }}
+                      >
+                        <item.icon className={`w-5 h-5 ${isActive(item.href) ? 'text-white' : ''}`} />
+                      </motion.div>
+                      
+                      {/* Text with slide effect */}
+                      <motion.span 
+                        className="relative z-10"
+                        initial={{ x: 0 }}
+                        whileHover={{ x: 5 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        {item.displayName || item.name}
+                      </motion.span>
+                      
+                      {/* Arrow indicator */}
+                      <motion.div
+                        className={`ml-auto relative z-10 ${isActive(item.href) ? 'text-white' : 'text-primary-500'}`}
+                        initial={{ x: -10, opacity: 0 }}
+                        whileHover={{ x: 0, opacity: 1 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        →
+                      </motion.div>
+                    </Link>
+                  )}
+                </motion.div>
               ))}
-              
-              {/* Mobile Contact Info */}
-              <div className="pt-4 mt-4 border-t border-gray-200 space-y-3">
-                <div className="flex items-center space-x-3 px-4 py-2 text-sm text-gray-600">
-                  <FaPhone className="w-4 h-4" />
-                  <span>9851023395 / 015201768</span>
-                </div>
-                <div className="flex items-center space-x-3 px-4 py-2 text-sm text-gray-600">
-                  <FaEnvelope className="w-4 h-4" />
-                  <span>info@diagonal.com</span>
-                </div>
-                <div className="flex items-center space-x-3 px-4 py-2 text-sm text-gray-600">
-                  <FaMapMarkerAlt className="w-4 h-4" />
-                  <span>Balkumari, Lalitpur</span>
-                </div>
-                <div className="px-4">
-                  <Link
-                    to="/design-construction"
-                    onClick={() => setIsOpen(false)}
-                    className="btn-primary w-full text-center"
-                  >
-                    Get Quote
-                  </Link>
-                </div>
-              </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </nav>
+    </motion.nav>
   );
 };
 

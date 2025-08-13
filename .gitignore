@@ -1,8 +1,11 @@
 # Dependencies
 node_modules/
+frontend/node_modules/
+backend/node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+lerna-debug.log*
 
 # Environment variables
 .env
@@ -10,26 +13,88 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
+frontend/.env*
+backend/.env
 
 # Build outputs
 build/
 dist/
+frontend/build/
+backend/dist/
+backend/public/uploads/
 
 # Database
 *.db
 *.sqlite
+db/*.sqlite*
+backend/db/*.sqlite*
 
 # Logs
 logs/
 *.log
+backend/logs/
+pids
+*.pid
+*.seed
+*.pid.lock
 
-# IDE
+# Uploads and user-generated content
+uploads/
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# IDE and Editor files
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.sublime-workspace
+.sublime-project
 
-# OS
+# OS generated files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+desktop.ini
+
+# Package managers
+.npm
+.yarn-integrity
+yarn.lock
+package-lock.json
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+.parcel-cache
+
+# Test coverage
+coverage/
+.nyc_output
+
+# Optional caches
+.eslintcache
+.stylelintcache
 
 # Docker
 .dockerignore
+
+# Backup files
+*.bak
+*.backup
+*.old
+restore_*.bat
+restore_*.ps1
+validate_*.ps1
+
+# Checkpoints (development files)
+checkpoints/
+CHECKPOINT_*
