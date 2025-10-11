@@ -905,6 +905,13 @@ const AdminDashboard = () => {
                       <div className="flex space-x-2">
                         <button className="btn-outline">Reply</button>
                         <button className="btn-secondary">Mark Read</button>
+                        <button 
+                          onClick={() => handleDeleteConfirm(contact)}
+                          className="btn-secondary text-red-600 border-red-300 hover:bg-red-50"
+                          title="Delete Message"
+                        >
+                          <FaTrash className="w-4 h-4" />
+                        </button>
                       </div>
                     </div>
                   </div>

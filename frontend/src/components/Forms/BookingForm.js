@@ -2,7 +2,13 @@ import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
-// Cleaned up booking form - removed icon imports for cleaner design
+import { 
+  FaUser, 
+  FaMapMarkerAlt,
+  FaCalendarAlt,
+  FaServicestack,
+  FaCheck
+} from 'react-icons/fa';
 
 import { bookingService } from '../../services';
 import { useApp } from '../../context/AppContext';
@@ -199,7 +205,7 @@ const BookingForm = ({ serviceType = null, onSuccess = null }) => {
         transition={{ duration: 0.6 }}
       >
         <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-          <span className="text-5xl">✅</span>
+          <FaCheck className="w-10 h-10 text-green-600" />
         </div>
         
         <div className="space-y-2">
@@ -242,7 +248,7 @@ const BookingForm = ({ serviceType = null, onSuccess = null }) => {
       {/* Personal Information */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
-          <span className="text-xl">👤</span>
+          <FaUser className="w-5 h-5 text-primary-600" />
           <span>Personal Information</span>
         </h3>
 
@@ -306,7 +312,7 @@ const BookingForm = ({ serviceType = null, onSuccess = null }) => {
       {/* Address Information */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
-          <span className="text-xl">📍</span>
+          <FaMapMarkerAlt className="w-5 h-5 text-primary-600" />
           <span>Address Information</span>
         </h3>
 
@@ -371,7 +377,7 @@ const BookingForm = ({ serviceType = null, onSuccess = null }) => {
       {/* Service Information */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
-          <span className="text-xl">🛠️</span>
+          <FaServicestack className="w-5 h-5 text-primary-600" />
           <span>Service Details</span>
         </h3>
 
@@ -437,7 +443,7 @@ const BookingForm = ({ serviceType = null, onSuccess = null }) => {
           type="submit"
           className="btn-primary w-full flex items-center justify-center space-x-2"
         >
-          <span className="text-xl">📅</span>
+          <FaCalendarAlt className="w-5 h-5" />
           <span>Book Appointment</span>
         </button>
         

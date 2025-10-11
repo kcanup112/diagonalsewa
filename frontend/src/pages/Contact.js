@@ -1,9 +1,21 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { toast } from 'react-hot-toast';
-// Cleaned up contact page - removed unnecessary icon imports for cleaner design
+import toast from 'react-hot-toast';
+import { 
+  FaPhone, 
+  FaEnvelope, 
+  FaMapMarkerAlt,
+  FaClock,
+  FaFacebookF,
+  FaTwitter,
+  FaInstagram,
+  FaLinkedinIn,
+  FaPaperPlane,
+  FaSpinner,
+  FaWhatsapp
+} from 'react-icons/fa';
 
-import { contactService } from '../services';
+import { contactService } from '../services/api';
 import { useApp } from '../context/AppContext';
 
 const Contact = () => {
@@ -119,25 +131,25 @@ const Contact = () => {
 
   const contactInfo = [
     {
-      emoji: '📞',
+      icon: FaPhone,
       title: 'Phone',
       details: ['+977-123-456789', '+977-987-654321'],
       color: 'primary'
     },
     {
-      emoji: '✉️',
+      icon: FaEnvelope,
       title: 'Email',
       details: ['info@constructionco.com', 'sales@constructionco.com'],
       color: 'secondary'
     },
     {
-      emoji: '📍',
+      icon: FaMapMarkerAlt,
       title: 'Address',
       details: ['New Road, Kathmandu', 'Nepal'],
       color: 'accent'
     },
     {
-      emoji: '🕒',
+      icon: FaClock,
       title: 'Business Hours',
       details: ['Sun - Fri: 10:00 AM - 6:00 PM'],
       color: 'gray'
@@ -145,11 +157,11 @@ const Contact = () => {
   ];
 
   const socialLinks = [
-    { emoji: '📘', url: '#', color: 'blue' },
-    { emoji: '🐦', url: '#', color: 'sky' },
-    { emoji: '📸', url: '#', color: 'pink' },
-    { emoji: '💼', url: '#', color: 'blue' },
-    { emoji: '💬', url: '#', color: 'green' }
+    { icon: FaFacebookF, url: '#', color: 'blue' },
+    { icon: FaTwitter, url: '#', color: 'sky' },
+    { icon: FaInstagram, url: '#', color: 'pink' },
+    { icon: FaLinkedinIn, url: '#', color: 'blue' },
+    { icon: FaWhatsapp, url: '#', color: 'green' }
   ];
 
   return (
@@ -214,7 +226,7 @@ const Contact = () => {
               📞 Get In Touch
             </div>
             <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-4xl">✉️</span>
+              <FaEnvelope className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-3xl md:text-4xl font-heading font-bold leading-tight">
               <span className="bg-gradient-to-r from-yellow-300 via-orange-300 to-red-300 bg-clip-text text-transparent">
@@ -242,11 +254,12 @@ const Contact = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             {contactInfo.map((info, index) => {
+              const IconComponent = info.icon;
               return (
                 <div key={index} className="card">
                   <div className="flex items-start space-x-4">
                     <div className={`w-12 h-12 bg-${info.color}-100 rounded-lg flex items-center justify-center flex-shrink-0`}>
-                      <span className="text-2xl">{info.emoji}</span>
+                      <IconComponent className={`w-6 h-6 text-${info.color}-600`} />
                     </div>
                     <div>
                       <h3 className="font-semibold text-gray-900 mb-2">{info.title}</h3>
@@ -425,12 +438,12 @@ const Contact = () => {
                 >
                   {isSubmitting ? (
                     <>
-                      <span className="text-lg animate-spin">⏳</span>
+                      <FaSpinner className="w-5 h-5 animate-spin" />
                       <span>Sending Message...</span>
                     </>
                   ) : (
                     <>
-                      <span className="text-lg">📧</span>
+                      <FaPaperPlane className="w-5 h-5" />
                       <span>Send Message</span>
                     </>
                   )}
@@ -470,7 +483,7 @@ const Contact = () => {
               <div className="p-4 bg-gray-50">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2 text-gray-700">
-                    <span className="text-lg">📍</span>
+                    <FaMapMarkerAlt className="w-4 h-4" />
                     <span className="text-sm font-medium">New Road, Kathmandu, Nepal</span>
                   </div>
                   <a
@@ -498,7 +511,7 @@ const Contact = () => {
           transition={{ duration: 0.6, delay: 0.8 }}
         >
           <div className="card text-center">
-            <span className="text-6xl block mx-auto mb-4">📞</span>
+            <FaPhone className="w-12 h-12 text-primary-600 mx-auto mb-4" />
             <h3 className="font-semibold text-gray-900 mb-2">Call Us Now</h3>
             <p className="text-gray-600 mb-4">
               Speak with our experts directly for immediate assistance
@@ -509,7 +522,7 @@ const Contact = () => {
           </div>
 
           <div className="card text-center">
-            <span className="text-6xl block mx-auto mb-4">📧</span>
+            <FaEnvelope className="w-12 h-12 text-secondary-600 mx-auto mb-4" />
             <h3 className="font-semibold text-gray-900 mb-2">Request Quote</h3>
             <p className="text-gray-600 mb-4">
               Get a detailed quote for your construction project
@@ -520,7 +533,7 @@ const Contact = () => {
           </div>
 
           <div className="card text-center">
-            <span className="text-6xl block mx-auto mb-4">💬</span>
+            <FaWhatsapp className="w-12 h-12 text-green-600 mx-auto mb-4" />
             <h3 className="font-semibold text-gray-900 mb-2">WhatsApp Chat</h3>
             <p className="text-gray-600 mb-4">
               Quick chat with our team on WhatsApp
