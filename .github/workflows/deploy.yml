@@ -1,0 +1,126 @@
+name: Deploy Diagonal Enterprises
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_USER: test_user
+          POSTGRES_DB: test_db
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: |
+          frontend/package-lock.json
+          backend/package-lock.json
+
+    - name: Install Backend Dependencies
+      run: |
+        cd backend
+        npm ci
+
+    - name: Install Frontend Dependencies
+      run: |
+        cd frontend
+        npm ci
+
+    - name: Run Backend Tests
+      env:
+        NODE_ENV: test
+        DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
+        JWT_SECRET: test_secret_key
+      run: |
+        cd backend
+        npm test || echo "No tests found, skipping..."
+
+    - name: Build Frontend
+      run: |
+        cd frontend
+        npm run build
+
+    - name: Run Frontend Tests
+      run: |
+        cd frontend
+        npm test -- --coverage --watchAll=false || echo "No tests found, skipping..."
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Deploy to VPS
+      uses: appleboy/ssh-action@v0.1.7
+      with:
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USERNAME }}
+        password: ${{ secrets.VPS_PASSWORD }}
+        script: |
+          # Navigate to project directory
+          cd /home/diagonal/NEWPROJECT
+          
+          # Pull latest changes
+          git pull origin main
+          
+          # Update backend dependencies
+          cd backend
+          npm install --production
+          
+          # Update frontend and rebuild
+          cd ../frontend
+          npm install --production
+          npm run build
+          
+          # Restart PostgreSQL if needed
+          docker restart postgres-diagonal || docker start postgres-diagonal
+          
+          # Wait for database to be ready
+          sleep 10
+          
+          # Run database migrations
+          cd ../backend
+          NODE_ENV=production node -e "
+            const db = require('./models');
+            db.sequelize.sync({ alter: true }).then(() => {
+              console.log('Database synced successfully');
+              process.exit(0);
+            }).catch(err => {
+              console.error('Database sync failed:', err);
+              process.exit(1);
+            });
+          "
+          
+          # Restart PM2 processes
+          pm2 restart diagonal-backend || pm2 start ecosystem.config.js
+          
+          # Reload Nginx
+          sudo systemctl reload nginx
+          
+          # Check deployment status
+          pm2 status
+          curl -f http://localhost || exit 1

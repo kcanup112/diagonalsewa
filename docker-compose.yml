@@ -3,19 +3,27 @@ version: '3.8'
 services:
   # PostgreSQL Database
   postgres:
-    image: postgres:15
+    image: postgres:15-alpine
     container_name: diagonal_postgres
+    restart: always
     environment:
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME:-diagonal_db}
+      POSTGRES_USER: ${DB_USER:-diagonal_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-DiagonalDB2025!}
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --auth-local=scram-sha-256"
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./backend/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./database/init:/docker-entrypoint-initdb.d
     networks:
       - diagonal_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-diagonal_user} -d ${DB_NAME:-diagonal_db}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
 
   # Backend API
   backend:
