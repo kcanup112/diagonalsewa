@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-// Cleaned up gallery page - removed unnecessary icon imports for cleaner design
+import { FaImages, FaVideo, FaUpload, FaEye, FaTrash, FaPlus, FaSpinner } from 'react-icons/fa';
 import PhotoSlider from '../components/PhotoSlider';
 import { galleryService } from '../services';
 
@@ -121,7 +121,7 @@ const Gallery = () => {
               🖼️ Our Portfolio
             </div>
             <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="w-8 h-8 text-white flex items-center justify-center">🖼️</span>
+              <FaImages className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-3xl md:text-4xl font-heading font-bold leading-tight">
               <span className="bg-gradient-to-r from-yellow-300 via-orange-300 to-red-300 bg-clip-text text-transparent">
@@ -163,7 +163,7 @@ const Gallery = () => {
             {loading ? (
               <div className="flex justify-center items-center py-12">
                 <div className="text-center">
-                  <span className="w-8 h-8 animate-spin text-primary-600 mx-auto mb-4 flex items-center justify-center">⏳</span>
+                  <FaSpinner className="w-8 h-8 animate-spin text-primary-600 mx-auto mb-4" />
                   <p className="text-gray-600">Loading featured projects...</p>
                 </div>
               </div>
@@ -205,7 +205,7 @@ const Gallery = () => {
                     : 'text-gray-600 hover:text-primary-500'
                 }`}
               >
-                <span className="w-5 h-5 flex items-center justify-center">🖼️</span>
+                <FaImages className="w-5 h-5" />
                 <span>Photos</span>
               </button>
               <button
@@ -216,7 +216,7 @@ const Gallery = () => {
                     : 'text-gray-600 hover:text-primary-500'
                 }`}
               >
-                <span className="w-5 h-5 flex items-center justify-center">🎥</span>
+                <FaVideo className="w-5 h-5" />
                 <span>Videos</span>
               </button>
             </div>
@@ -251,7 +251,7 @@ const Gallery = () => {
                   transition={{ duration: 0.2 }}
                 >
                   <div className="h-48 flex flex-col items-center justify-center text-gray-400 hover:text-primary-500 transition-colors duration-300">
-                    <span className="w-12 h-12 mb-2 flex items-center justify-center text-3xl">➕</span>
+                    <FaPlus className="w-12 h-12 mb-2" />
                     <span className="text-sm font-medium">Upload New Photo</span>
                   </div>
                 </motion.div>
@@ -272,10 +272,10 @@ const Gallery = () => {
                       <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
                         <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex space-x-4">
                           <button className="bg-white text-primary-500 p-2 rounded-full hover:bg-primary-50">
-                            <span className="w-4 h-4 flex items-center justify-center">👁️</span>
+                            <FaEye className="w-4 h-4" />
                           </button>
                           <button className="bg-white text-red-500 p-2 rounded-full hover:bg-red-50">
-                            <span className="w-4 h-4 flex items-center justify-center">🗑️</span>
+                            <FaTrash className="w-4 h-4" />
                           </button>
                         </div>
                       </div>
@@ -303,7 +303,7 @@ const Gallery = () => {
                   transition={{ duration: 0.2 }}
                 >
                   <div className="h-48 flex flex-col items-center justify-center text-gray-400 hover:text-primary-500 transition-colors duration-300">
-                    <span className="w-12 h-12 mb-2 flex items-center justify-center text-3xl">➕</span>
+                    <FaPlus className="w-12 h-12 mb-2" />
                     <span className="text-sm font-medium">Upload New Video</span>
                   </div>
                 </motion.div>
@@ -323,7 +323,7 @@ const Gallery = () => {
                       />
                       <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
                         <div className="bg-white bg-opacity-20 rounded-full p-4">
-                          <span className="w-8 h-8 text-white flex items-center justify-center text-2xl">▶️</span>
+                          <FaVideo className="w-8 h-8 text-white" />
                         </div>
                       </div>
                       <span className="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">
@@ -331,10 +331,10 @@ const Gallery = () => {
                       </span>
                       <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex space-x-2">
                         <button className="bg-white text-primary-500 p-2 rounded-full hover:bg-primary-50">
-                          <span className="w-4 h-4 flex items-center justify-center">👁️</span>
+                          <FaEye className="w-4 h-4" />
                         </button>
                         <button className="bg-white text-red-500 p-2 rounded-full hover:bg-red-50">
-                          <span className="w-4 h-4 flex items-center justify-center">🗑️</span>
+                          <FaTrash className="w-4 h-4" />
                         </button>
                       </div>
                     </div>
@@ -350,7 +350,7 @@ const Gallery = () => {
           {/* Coming Soon Message */}
           <div className="text-center mt-12">
             <div className="bg-accent-100 border border-accent-300 rounded-lg p-6 max-w-md mx-auto">
-              <span className="w-8 h-8 text-accent-600 mx-auto mb-3 flex items-center justify-center">📤</span>
+              <FaUpload className="w-8 h-8 text-accent-600 mx-auto mb-3" />
               <h3 className="text-lg font-semibold text-accent-800 mb-2">Upload Functionality Coming Soon</h3>
               <p className="text-accent-700 text-sm">
                 We're working on implementing the upload feature for photos and videos. 

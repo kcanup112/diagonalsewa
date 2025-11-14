@@ -1,9 +1,9 @@
 module.exports = (sequelize, DataTypes) => {
   const Appointment = sequelize.define('Appointment', {
     id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true
     },
     name: {
       type: DataTypes.STRING,
@@ -44,8 +44,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true
     },
     serviceType: {
-      type: DataTypes.ENUM('3d_design', 'full_package', 'consultation', 'repair_maintenance'),
-      allowNull: false
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        isIn: [['3d_design', 'full_package', 'consultation', 'repair_maintenance']]
+      }
     },
     appointmentDate: {
       type: DataTypes.DATE,
@@ -65,12 +68,18 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: []
     },
     status: {
-      type: DataTypes.ENUM('pending', 'confirmed', 'in_progress', 'completed', 'cancelled'),
-      defaultValue: 'pending'
+      type: DataTypes.STRING,
+      defaultValue: 'pending',
+      validate: {
+        isIn: [['pending', 'confirmed', 'in_progress', 'completed', 'cancelled']]
+      }
     },
     priority: {
-      type: DataTypes.ENUM('low', 'medium', 'high', 'urgent'),
-      defaultValue: 'medium'
+      type: DataTypes.STRING,
+      defaultValue: 'medium',
+      validate: {
+        isIn: [['low', 'medium', 'high', 'urgent']]
+      }
     },
     estimatedCost: {
       type: DataTypes.DECIMAL(12, 2),
@@ -81,7 +90,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true
     },
     serviceId: {
-      type: DataTypes.UUID,
+      type: DataTypes.INTEGER,
       allowNull: true,
       references: {
         model: 'services',

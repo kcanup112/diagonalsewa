@@ -8,7 +8,7 @@ const logger = require('./logger');
 const { RateLimitError } = require('./errors');
 
 /**
- * Custom rate limit handler
+ * Custom rate limit handler - returns response instead of throwing error
  */
 const rateLimitHandler = (req, res, next, options) => {
   logger.warn('Rate limit exceeded', {
@@ -18,7 +18,13 @@ const rateLimitHandler = (req, res, next, options) => {
     userAgent: req.get('User-Agent')
   });
 
-  throw new RateLimitError('Too many requests, please try again later');
+  // Send response instead of throwing error
+  return res.status(429).json({
+    success: false,
+    message: 'Too many requests, please try again later',
+    errorCode: 'RATE_LIMIT_EXCEEDED',
+    retryAfter: Math.ceil(options.windowMs / 1000 / 60) + ' minutes'
+  });
 };
 
 /**
@@ -26,7 +32,9 @@ const rateLimitHandler = (req, res, next, options) => {
  */
 const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
+  max: 1000, // Very high limit to prevent blocking legitimate users
+  skipSuccessfulRequests: false,
+  skipFailedRequests: false,
   message: {
     success: false,
     message: 'Too many requests from this IP, please try again after 15 minutes',
@@ -34,6 +42,24 @@ const generalLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  // Use a key generator that includes User-Agent for mobile devices
+  keyGenerator: (req) => {
+    // Handle X-Forwarded-For for proxies and load balancers
+    const forwarded = req.headers['x-forwarded-for'];
+    const ip = forwarded ? forwarded.split(',')[0].trim() : req.ip;
+    
+    // For mobile devices, combine IP with a hash of user agent to differentiate devices
+    const userAgent = req.get('User-Agent') || '';
+    if (userAgent.includes('iPhone') || userAgent.includes('iPad') || userAgent.includes('Android')) {
+      // Create a simple hash from user agent
+      const uaHash = userAgent.split('').reduce((acc, char) => {
+        return ((acc << 5) - acc) + char.charCodeAt(0);
+      }, 0);
+      return `${ip}-mobile-${Math.abs(uaHash) % 10000}`;
+    }
+    
+    return ip;
+  },
   handler: rateLimitHandler
 });
 
@@ -42,7 +68,9 @@ const generalLimiter = rateLimit({
  */
 const strictLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // Limit each IP to 5 requests per windowMs
+  max: 50, // Reasonable limit for sensitive operations
+  skipSuccessfulRequests: false,
+  skipFailedRequests: false,
   message: {
     success: false,
     message: 'Too many attempts, please try again after 15 minutes',
@@ -50,6 +78,20 @@ const strictLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  keyGenerator: (req) => {
+    const forwarded = req.headers['x-forwarded-for'];
+    const ip = forwarded ? forwarded.split(',')[0].trim() : req.ip;
+    
+    const userAgent = req.get('User-Agent') || '';
+    if (userAgent.includes('iPhone') || userAgent.includes('iPad') || userAgent.includes('Android')) {
+      const uaHash = userAgent.split('').reduce((acc, char) => {
+        return ((acc << 5) - acc) + char.charCodeAt(0);
+      }, 0);
+      return `${ip}-mobile-${Math.abs(uaHash) % 10000}`;
+    }
+    
+    return ip;
+  },
   handler: rateLimitHandler
 });
 
@@ -58,7 +100,9 @@ const strictLimiter = rateLimit({
  */
 const calculationLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
-  max: 10, // Limit each IP to 10 calculations per minute
+  max: 100, // High limit for calculations
+  skipSuccessfulRequests: false,
+  skipFailedRequests: true, // Don't count failed requests
   message: {
     success: false,
     message: 'Too many calculations, please wait a minute before trying again',
@@ -66,6 +110,20 @@ const calculationLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  keyGenerator: (req) => {
+    const forwarded = req.headers['x-forwarded-for'];
+    const ip = forwarded ? forwarded.split(',')[0].trim() : req.ip;
+    
+    const userAgent = req.get('User-Agent') || '';
+    if (userAgent.includes('iPhone') || userAgent.includes('iPad') || userAgent.includes('Android')) {
+      const uaHash = userAgent.split('').reduce((acc, char) => {
+        return ((acc << 5) - acc) + char.charCodeAt(0);
+      }, 0);
+      return `${ip}-mobile-${Math.abs(uaHash) % 10000}`;
+    }
+    
+    return ip;
+  },
   handler: rateLimitHandler
 });
 
@@ -74,7 +132,9 @@ const calculationLimiter = rateLimit({
  */
 const bookingLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 3, // Limit each IP to 3 bookings per hour
+  max: 20, // Reasonable limit for bookings
+  skipSuccessfulRequests: false,
+  skipFailedRequests: true, // Don't count failed booking attempts
   message: {
     success: false,
     message: 'Too many booking attempts, please wait an hour before trying again',
@@ -82,6 +142,20 @@ const bookingLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  keyGenerator: (req) => {
+    const forwarded = req.headers['x-forwarded-for'];
+    const ip = forwarded ? forwarded.split(',')[0].trim() : req.ip;
+    
+    const userAgent = req.get('User-Agent') || '';
+    if (userAgent.includes('iPhone') || userAgent.includes('iPad') || userAgent.includes('Android')) {
+      const uaHash = userAgent.split('').reduce((acc, char) => {
+        return ((acc << 5) - acc) + char.charCodeAt(0);
+      }, 0);
+      return `${ip}-mobile-${Math.abs(uaHash) % 10000}`;
+    }
+    
+    return ip;
+  },
   handler: rateLimitHandler
 });
 

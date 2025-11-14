@@ -18,22 +18,44 @@ const authenticateAdmin = async (req, res, next) => {
       });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const admin = await Admin.findByPk(decoded.id);
-    
-    if (!admin || !admin.isActive) {
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const admin = await Admin.findByPk(decoded.id);
+      
+      if (!admin || !admin.isActive) {
+        return res.status(401).json({
+          success: false,
+          message: 'Invalid token or admin account disabled.'
+        });
+      }
+
+      req.admin = admin;
+      next();
+    } catch (jwtError) {
+      // Handle JWT-specific errors
+      if (jwtError.name === 'TokenExpiredError') {
+        return res.status(401).json({
+          success: false,
+          message: 'Token has expired. Please login again.'
+        });
+      }
+      if (jwtError.name === 'JsonWebTokenError') {
+        return res.status(401).json({
+          success: false,
+          message: 'Invalid token signature.'
+        });
+      }
+      // Other JWT errors
       return res.status(401).json({
         success: false,
-        message: 'Invalid token or admin account disabled.'
+        message: 'Token verification failed.'
       });
     }
-
-    req.admin = admin;
-    next();
   } catch (error) {
-    res.status(401).json({
+    console.error('Authentication error:', error);
+    res.status(500).json({
       success: false,
-      message: 'Invalid token.'
+      message: 'Authentication failed.'
     });
   }
 };

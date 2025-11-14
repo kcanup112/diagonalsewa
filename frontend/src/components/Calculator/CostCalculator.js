@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
-// Cleaned up cost calculator - removed unnecessary icon imports for cleaner design
+import { 
+  FaCalculator, 
+  FaHome, 
+  FaChartPie,
+  FaCog,
+  FaSpinner
+} from 'react-icons/fa';
 
 import { calculatorService } from '../../services';
 import { useApp } from '../../context/AppContext';
@@ -238,7 +244,7 @@ const CostCalculator = ({ onCalculationComplete = null }) => {
         <form onSubmit={handleCalculate} className="space-y-6">
           {/* Header */}
           <div className="flex items-center space-x-3 pb-4 border-b border-gray-200">
-            <span className="w-6 h-6 text-primary-600 flex items-center justify-center">🧮</span>
+            <FaCalculator className="w-6 h-6 text-primary-600" />
             <h3 className="text-xl font-semibold text-gray-900">
               Construction Cost Calculator
             </h3>
@@ -313,7 +319,7 @@ const CostCalculator = ({ onCalculationComplete = null }) => {
                     </div>
                     {formData.floors === option.value && (
                       <div className="text-accent-600">
-                        <span className="w-4 h-4 flex items-center justify-center">🏠</span>
+                        <FaHome className="w-4 h-4" />
                       </div>
                     )}
                   </div>
@@ -368,7 +374,7 @@ const CostCalculator = ({ onCalculationComplete = null }) => {
                     </div>
                     {formData.quality === option.value && (
                       <div className="text-primary-600">
-                        <span className="w-5 h-5 flex items-center justify-center">📊</span>
+                        <FaChartPie className="w-5 h-5" />
                       </div>
                     )}
                   </div>
@@ -417,7 +423,7 @@ const CostCalculator = ({ onCalculationComplete = null }) => {
                     </div>
                     {formData.project_type === type.value && (
                       <div className="text-secondary-600">
-                        <span className="w-5 h-5 flex items-center justify-center">🏠</span>
+                        <FaHome className="w-5 h-5" />
                       </div>
                     )}
                   </div>
@@ -481,12 +487,12 @@ const CostCalculator = ({ onCalculationComplete = null }) => {
           >
             {isCalculating ? (
               <>
-                <span className="w-5 h-5 animate-spin flex items-center justify-center">⏳</span>
+                <FaSpinner className="w-5 h-5 animate-spin" />
                 <span>Calculating...</span>
               </>
             ) : (
               <>
-                <span className="w-5 h-5 flex items-center justify-center">⚙️</span>
+                <FaCog className="w-5 h-5" />
                 <span>Calculate Detailed Cost & Timeline</span>
               </>
             )}
@@ -503,7 +509,7 @@ const CostCalculator = ({ onCalculationComplete = null }) => {
       >
         <div className="card bg-gradient-to-r from-primary-50 to-secondary-50 border-primary-200">
           <div className="text-center space-y-4">
-            <span className="w-16 h-16 text-primary-600 mx-auto flex items-center justify-center text-4xl">🏠</span>
+            <FaHome className="w-16 h-16 text-primary-600 mx-auto" />
             <h4 className="text-xl font-semibold text-gray-900">
               Ready to Start Your Project?
             </h4>
@@ -530,7 +536,7 @@ const CostCalculator = ({ onCalculationComplete = null }) => {
               }}
               className="btn-primary inline-flex items-center space-x-2"
             >
-              <span className="w-5 h-5 flex items-center justify-center">🏠</span>
+              <FaHome className="w-5 h-5" />
               <span>Book Consultation</span>
             </button>
           </div>

@@ -18,13 +18,19 @@ const Offer = sequelize.define('Offer', {
     allowNull: true
   },
   offerType: {
-    type: DataTypes.ENUM('discount', 'promotion', 'special_deal', 'seasonal'),
+    type: DataTypes.STRING,
     allowNull: false,
-    defaultValue: 'discount'
+    defaultValue: 'discount',
+    validate: {
+      isIn: [['discount', 'promotion', 'special_deal', 'seasonal']]
+    }
   },
   discountType: {
-    type: DataTypes.ENUM('percentage', 'fixed_amount', 'buy_one_get_one', 'free_service'),
-    allowNull: true
+    type: DataTypes.STRING,
+    allowNull: true,
+    validate: {
+      isIn: [['percentage', 'fixed_amount', 'buy_one_get_one', 'free_service']]
+    }
   },
   discountValue: {
     type: DataTypes.DECIMAL(10, 2),
@@ -81,9 +87,12 @@ const Offer = sequelize.define('Offer', {
     defaultValue: false
   },
   popupDisplayType: {
-    type: DataTypes.ENUM('immediate', 'exit_intent', 'time_delay', 'scroll_percentage'),
+    type: DataTypes.STRING,
     allowNull: true,
-    defaultValue: 'immediate'
+    defaultValue: 'immediate',
+    validate: {
+      isIn: [['immediate', 'exit_intent', 'time_delay', 'scroll_percentage']]
+    }
   },
   popupDelay: {
     type: DataTypes.INTEGER,

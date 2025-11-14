@@ -35,8 +35,11 @@ const Portfolio = sequelize.define('Portfolio', {
     allowNull: false
   },
   projectType: {
-    type: DataTypes.ENUM('3D Design', 'Construction', '3D Design + Construction', 'Renovation', 'Interior Design'),
-    allowNull: false
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      isIn: [['3D Design', 'Construction', '3D Design + Construction', 'Renovation', 'Interior Design']]
+    }
   },
   completionDate: {
     type: DataTypes.DATE,
@@ -59,8 +62,7 @@ const Portfolio = sequelize.define('Portfolio', {
   timestamps: true
 });
 
-// Sync the model
-Portfolio.sync({ alter: true }).catch(console.error);
+// Sync removed - will be handled by main models/index.js
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -158,8 +160,8 @@ router.post('/', upload.fields([
     }
 
     // Process uploaded files
-    const images = req.files.images ? req.files.images.map(file => file.filename) : [];
-    const videos = req.files.videos ? req.files.videos.map(file => file.filename) : [];
+    const images = (req.files && req.files.images) ? req.files.images.map(file => file.filename) : [];
+    const videos = (req.files && req.files.videos) ? req.files.videos.map(file => file.filename) : [];
     
     // Process YouTube URLs
     let parsedYoutubeUrls = [];

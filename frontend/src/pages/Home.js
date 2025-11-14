@@ -1,7 +1,16 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-// Removed unused icon imports - cleaned up for better performance
+import { 
+  FaCube, 
+  FaTools, 
+  FaCalendarAlt,
+  FaCheck,
+  FaStar,
+  FaQuoteLeft,
+  FaArrowRight,
+  FaSearch
+} from 'react-icons/fa';
 
 import { galleryService } from '../services';
 import { preloadImages, CRITICAL_IMAGES } from '../utils/imageOptimization';
@@ -352,8 +361,10 @@ const Home = React.memo(() => {
                   to="/design-construction?tab=booking"
                   className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-gray-900 font-bold px-6 py-3 rounded-xl text-base sm:text-lg shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center space-x-2 group"
                 >
+                  <FaCalendarAlt className="w-4 h-4" />
                   <span>Start Your Dream Project</span>
                   <span className="text-lg">🚀</span>
+                  <FaArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform duration-200" />
                 </Link>
               </motion.div>
 
@@ -426,13 +437,13 @@ const Home = React.memo(() => {
                 
                 {/* Enhanced Floating Elements */}
                 <div className="absolute -top-4 -right-4 w-16 h-16 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center animate-float shadow-xl">
-                  <span className="text-2xl">✓</span>
+                  <FaCheck className="w-6 h-6 text-white" />
                 </div>
                 <div className="absolute -bottom-4 -left-4 w-14 h-14 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center animate-float shadow-xl" style={{ animationDelay: '1s' }}>
-                  <span className="text-xl">🔧</span>
+                  <FaTools className="w-6 h-6 text-white" />
                 </div>
                 <div className="absolute top-1/2 -right-3 w-12 h-12 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full flex items-center justify-center animate-float shadow-lg" style={{ animationDelay: '2s' }}>
-                  <span className="text-lg">🏗️</span>
+                  <FaCube className="w-5 h-5 text-white" />
                 </div>
               </div>
 
@@ -441,7 +452,7 @@ const Home = React.memo(() => {
                 <div className="bg-gradient-to-r from-white/15 to-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 shadow-xl relative z-20">
                   <div className="flex items-center space-x-3 mb-3">
                     <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-                      <span className="text-lg">🔍</span>
+                      <FaSearch className="w-4 h-4 text-white" />
                     </div>
                     <div>
                       <span className="text-white font-bold text-base">Quick Search</span>
@@ -468,7 +479,7 @@ const Home = React.memo(() => {
       </section>
 
       {/* Compact Company Overview & Trust Section */}
-      <section className="py-8 text-white relative overflow-hidden" style={{backgroundColor: '#0f4c5c'}}>
+      <section className="py-8 text-white relative overflow-hidden z-0" style={{backgroundColor: '#0f4c5c'}}>
         {/* Simplified Background Elements */}
         <div className="absolute inset-0 overflow-hidden opacity-30">
           <div className="absolute top-10 right-10 w-16 h-16 border border-white/10 rounded-full animate-pulse"></div>
@@ -588,9 +599,6 @@ const Home = React.memo(() => {
                               <h3 className="text-xl font-heading font-semibold group-hover:text-yellow-300 transition-colors duration-300 font-display tracking-wide">
                                 {service.title}
                               </h3>
-                              <div className="text-2xl font-bold mt-1 font-ui">
-                                {index === 0 ? 'Rs 50/sq ft' : index === 1 ? 'Rs 2,200/sq ft' : 'Rs 150/hr'}
-                              </div>
                             </div>
                           </div>
                         </div>
@@ -626,6 +634,7 @@ const Home = React.memo(() => {
                       }`}
                     >
                       <span>{index === 1 ? '🚀 Get Started Today' : '📋 Learn More'}</span>
+                      <FaArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
                     </Link>
                   </div>
 
@@ -718,6 +727,7 @@ const Home = React.memo(() => {
                 >
                   <span>Get Your Free Consultation</span>
                   <span className="text-base">🚀</span>
+                  <FaArrowRight className="w-3 h-3" />
                 </Link>
               </motion.div>
             </motion.div>
@@ -798,14 +808,14 @@ const Home = React.memo(() => {
                 
                 {/* Quote Icon */}
                 <div className="absolute top-4 right-4 w-8 h-8 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                  <span className="text-white text-lg">"</span>
+                  <FaQuoteLeft className="text-white w-3 h-3" />
                 </div>
                 
                 <div className="relative p-6 space-y-4">
                   {/* Rating Stars */}
                   <div className="flex items-center space-x-1">
                     {[...Array(testimonial.rating)].map((_, i) => (
-                      <span key={i} className="text-yellow-400 text-lg">★</span>
+                      <FaStar key={i} className="w-4 h-4 text-yellow-400" />
                     ))}
                     <span className="ml-2 text-gray-600 font-semibold text-sm">({testimonial.rating}.0)</span>
                   </div>

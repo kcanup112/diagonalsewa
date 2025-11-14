@@ -133,19 +133,19 @@ const Contact = () => {
     {
       icon: FaPhone,
       title: 'Phone',
-      details: ['+977-123-456789', '+977-987-654321'],
+      details: ['+9779801890011', '015201768'],
       color: 'primary'
     },
     {
       icon: FaEnvelope,
       title: 'Email',
-      details: ['info@constructionco.com', 'sales@constructionco.com'],
+      details: ['info@diagonal.com', 'sales@diagonal.com'],
       color: 'secondary'
     },
     {
       icon: FaMapMarkerAlt,
       title: 'Address',
-      details: ['New Road, Kathmandu', 'Nepal'],
+      details: ['Balkumari, laitpur', 'Nepal','opposite of balkuamari Petrol pump'],
       color: 'accent'
     },
     {
@@ -157,9 +157,9 @@ const Contact = () => {
   ];
 
   const socialLinks = [
-    { icon: FaFacebookF, url: '#', color: 'blue' },
+    { icon: FaFacebookF, url: '', color: 'blue' },
     { icon: FaTwitter, url: '#', color: 'sky' },
-    { icon: FaInstagram, url: '#', color: 'pink' },
+    { icon: FaInstagram, url: 'https://www.instagram.com/diagonalgroup/', color: 'pink' },
     { icon: FaLinkedinIn, url: '#', color: 'blue' },
     { icon: FaWhatsapp, url: '#', color: 'green' }
   ];
@@ -298,7 +298,7 @@ const Contact = () => {
                 24/7 emergency repair and maintenance services available
               </p>
               <a 
-                href="tel:+977123456789" 
+                href="tel:+9779801890011" 
                 className="btn-outline border-red-300 text-red-700 hover:bg-red-100 block text-center"
               >
                 Call Emergency Line
@@ -516,7 +516,7 @@ const Contact = () => {
             <p className="text-gray-600 mb-4">
               Speak with our experts directly for immediate assistance
             </p>
-            <a href="tel:+977123456789" className="btn-primary">
+            <a href="tel:+9779801890011" className="btn-primary">
               Call Now
             </a>
           </div>
@@ -539,7 +539,7 @@ const Contact = () => {
               Quick chat with our team on WhatsApp
             </p>
             <a 
-              href="https://wa.me/977123456789" 
+              href="https://wa.me/9779801890019" 
               target="_blank" 
               rel="noopener noreferrer"
               className="btn-outline border-green-300 text-green-700 hover:bg-green-50"

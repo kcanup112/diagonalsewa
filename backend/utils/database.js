@@ -265,7 +265,8 @@ const bulkOperations = {
 const healthCheck = async (sequelize) => {
   try {
     await sequelize.authenticate();
-    const query = await sequelize.query('SELECT NOW() as current_time');
+    // SQLite uses datetime('now') instead of NOW()
+    const query = await sequelize.query("SELECT datetime('now') as current_time");
     
     return {
       status: 'healthy',

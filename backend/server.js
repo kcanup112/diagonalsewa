@@ -22,8 +22,9 @@ const { healthCheck } = require('./utils/database');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Trust proxy for proper IP detection
-app.set('trust proxy', 1);
+// Trust proxy for proper IP detection (important for iOS, mobile networks, and load balancers)
+// Set to true to trust all proxies, or use 1 for first proxy only
+app.set('trust proxy', true);
 
 // Middleware
 app.use(helmet());
@@ -41,9 +42,27 @@ app.use(morgan('combined', {
   }
 }));
 
-// Rate limiting and speed limiting
-app.use(generalLimiter);
-app.use(speedLimiter);
+// Conditional rate limiting - skip completely for localhost
+const isLocalRequest = (req) => {
+  const ip = req.ip || '';
+  return ip === '::1' || ip === '127.0.0.1' || ip === '::ffff:127.0.0.1';
+};
+
+app.use((req, res, next) => {
+  if (!isLocalRequest(req)) {
+    generalLimiter(req, res, next);
+  } else {
+    next();
+  }
+});
+
+app.use((req, res, next) => {
+  if (!isLocalRequest(req)) {
+    speedLimiter(req, res, next);
+  } else {
+    next();
+  }
+});
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
@@ -144,8 +163,8 @@ const startServer = async () => {
     await sequelize.authenticate();
     logger.info('Database connection established successfully');
     
-    // Sync database models
-    await sequelize.sync({ alter: true });
+    // Sync database models (no alter for production stability)
+    await sequelize.sync();
     logger.info('Database models synchronized');
     
     app.listen(PORT, () => {

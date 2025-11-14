@@ -123,17 +123,6 @@ const Navbar = () => {
     tap: { scale: 0.95 }
   };
 
-  const linkVariants = {
-    initial: { y: 0 },
-    hover: { 
-      y: -2,
-      transition: { 
-        duration: 0.2,
-        ease: "easeOut"
-      }
-    }
-  };
-
   const mobileMenuVariants = {
     initial: { opacity: 0, y: -20 },
     animate: { 
@@ -177,22 +166,19 @@ const Navbar = () => {
           : 'bg-white shadow-lg'
       }`}
     >
-      <div className="container mx-auto px-4">
-        <div className={`flex items-center transition-all duration-500 ease-out ${
+      <div className="max-w-full mx-auto px-4">
+        <div className={`flex items-center transition-all duration-500 ${
           isScrolled && !isNavHovered ? 'justify-center py-2' : 'justify-between py-4'
         }`}>
-          {/* Company Logo and Brand - Smooth fade and slide */}
+          {/* Company Logo and Brand */}
           <motion.div
             animate={{ 
               opacity: (isScrolled && !isNavHovered) ? 0 : 1,
-              x: (isScrolled && !isNavHovered) ? -200 : 0,
+              x: (isScrolled && !isNavHovered) ? -100 : 0,
               scale: (isScrolled && !isNavHovered) ? 0.8 : 1
             }}
-            transition={{ 
-              duration: 0.5, 
-              ease: [0.4, 0, 0.2, 1] // Synchronized easing
-            }}
-            className={`${(isScrolled && !isNavHovered) ? 'absolute pointer-events-none' : ''} origin-left`}
+            transition={{ duration: 0.5 }}
+            className={`flex-shrink-0 ${(isScrolled && !isNavHovered) ? 'absolute pointer-events-none' : ''}`}
           >
             <Link to="/" className="flex items-center space-x-3 group">
               <motion.div 
@@ -200,7 +186,7 @@ const Navbar = () => {
                 initial="initial"
                 whileHover="hover"
                 whileTap="tap"
-                className="relative w-12 h-12 flex items-center justify-center overflow-hidden"
+                className="relative w-12 h-12 flex items-center justify-center"
               >
                 <img 
                   src={DiagonalLogo} 
@@ -212,190 +198,153 @@ const Navbar = () => {
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="ml-1"
               >
                 <motion.h1 
-                  className="text-2xl font-heading font-bold text-gray-900 group-hover:text-primary-600 transition-colors duration-200 leading-tight font-display tracking-tight"
+                  className="text-base font-bold text-gray-900 group-hover:text-primary-600 transition-colors leading-tight whitespace-nowrap"
                   whileHover={{ scale: 1.05 }}
                 >
-                  Diagonal Enterprises
+                  Diagonal Construction
                 </motion.h1>
                 <motion.p 
-                  className="text-sm text-gray-600 group-hover:text-primary-500 transition-colors duration-200 -mt-1 font-ui"
+                  className="text-base text-gray-600 group-hover:text-primary-500 transition-colors"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.5, delay: 0.4 }}
                 >
-                  Infrastructure Construction
+                  Repair & Maintenance
                 </motion.p>
               </motion.div>
             </Link>
           </motion.div>
 
-          {/* Innovative Smart Navigation */}
-          <div className={`hidden lg:flex items-center transition-all duration-500 ease-out ${
-            isScrolled && !isNavHovered ? 'space-x-0.5' : 'space-x-1'
+          {/* Desktop Navigation with Text Hide Animation */}
+          <div className={`hidden lg:flex items-center transition-all duration-500 ${
+            isScrolled && !isNavHovered ? 'space-x-1' : 'space-x-2'
           }`}>
-            {navigation.map((item, index) => {
+            {navigation.map((item) => {
               const isItemActive = isActive(item.href);
               const showFullText = !isScrolled || isNavHovered;
-              const displayText = showFullText ? item.name : item.shortName;
               
               return (
-                <motion.div
-                  key={item.name}
-                  variants={linkVariants}
-                  initial="initial"
-                  whileHover="hover"
-                  custom={index}
-                  className="relative"
-                >
+                <motion.div key={item.name} whileHover={{ y: -2 }} transition={{ duration: 0.2 }}>
                   {item.external || item.scroll ? (
                     <motion.button
                       onClick={() => handleNavClick(item)}
-                      layout
-                      className={`relative flex items-center justify-center rounded-xl font-bold transition-all duration-300 ease-out group overflow-hidden ${
-                        (isScrolled && !isNavHovered) ? 'px-2 py-1.5 text-sm' : 'px-4 py-2.5 text-base'
+                      className={`relative flex items-center justify-center rounded-lg font-medium transition-all whitespace-nowrap overflow-hidden ${
+                        (isScrolled && !isNavHovered) ? 'px-2 py-2 text-sm' : 'px-4 py-2.5 text-base'
                       } ${
-                        isItemActive && !item.external && !item.scroll
-                          ? 'text-white bg-gradient-to-r from-primary-500 to-secondary-500 shadow-lg shadow-primary-500/25'
-                          : 'text-gray-700 hover:text-primary-600 hover:bg-gradient-to-r hover:from-primary-50 hover:to-secondary-50'
+                        isItemActive && !item.external
+                          ? 'text-white bg-gradient-to-r from-primary-500 to-secondary-500 shadow-lg'
+                          : 'text-gray-700 hover:text-primary-600 hover:bg-primary-50'
                       }`}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      transition={{ 
-                        layout: { duration: 0.3, ease: "easeInOut" },
-                        scale: { duration: 0.15 }
-                      }}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                     >
-                      {/* Active background with smooth morphing */}
-                      {isItemActive && !item.external && !item.scroll && (
+                      {isItemActive && (
                         <motion.div
                           layoutId="activeNavBg"
-                          className="absolute inset-0 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-xl"
-                          transition={{ 
-                            type: "spring", 
-                            stiffness: 400, 
-                            damping: 30
-                          }}
+                          className="absolute inset-0 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg"
+                          transition={{ type: "spring", stiffness: 400, damping: 30 }}
                         />
                       )}
-                      
-                      {/* Icon with subtle animation */}
                       <motion.div
                         className="relative z-10 flex-shrink-0"
-                        animate={{
-                          scale: (isScrolled && !isNavHovered) ? 1.05 : 1,
-                        }}
-                        whileHover={{ scale: 1.1 }}
-                        transition={{ duration: 0.2 }}
+                        whileHover={{ rotate: 360, scale: 1.1 }}
+                        transition={{ duration: 0.5 }}
                       >
-                        <item.icon className={`w-4 h-4 ${isItemActive && !item.external && !item.scroll ? 'text-white' : ''}`} />
+                        <item.icon className="w-5 h-5" />
                       </motion.div>
-                      
-                      {/* Smooth text animation */}
                       <motion.div
-                        className="relative z-10 overflow-hidden whitespace-nowrap"
+                        className="relative z-10 overflow-hidden"
                         animate={{
                           width: showFullText ? 'auto' : '0px',
                           marginLeft: showFullText ? '8px' : '0px',
                           opacity: showFullText ? 1 : 0,
                         }}
-                        transition={{ 
-                          duration: 0.3, 
-                          ease: "easeInOut"
-                        }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
                       >
-                        <span className="block">
-                          {displayText}
+                        <span className="flex flex-col leading-tight text-base">
+                          {item.name.includes('&') || item.name.includes('3D') ? (
+                            <>
+                              <span className="text-xs leading-tight">{item.name.split(' ').slice(0, item.name.split(' ').indexOf('&') + 1).join(' ')}</span>
+                              <span className="text-xs leading-tight">{item.name.split(' ').slice(item.name.split(' ').indexOf('&') + 1).join(' ')}</span>
+                            </>
+                          ) : (
+                            <span className="text-base">{item.name}</span>
+                          )}
                         </span>
                       </motion.div>
-                      
-                      {/* External link indicator */}
                       {item.external && showFullText && (
-                        <motion.div
-                          className="relative z-10 ml-1 flex-shrink-0"
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ duration: 0.2, delay: 0.1 }}
+                        <motion.svg 
+                          className="w-3 h-3 ml-1 relative z-10" 
+                          fill="none" 
+                          stroke="currentColor" 
+                          viewBox="0 0 24 24"
+                          initial={{ scale: 0.8, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
                           whileHover={{ scale: 1.1 }}
                         >
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                          </svg>
-                        </motion.div>
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </motion.svg>
                       )}
-                      
-                      {/* Enhanced hover underline */}
                       <motion.div
                         className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full"
                         initial={{ scaleX: 0 }}
-                        whileHover={{ scaleX: isItemActive && !item.external && !item.scroll ? 0 : 1 }}
+                        whileHover={{ scaleX: isItemActive ? 0 : 1 }}
                         transition={{ duration: 0.2 }}
                       />
                     </motion.button>
                   ) : (
                     <Link
                       to={item.href}
-                      className={`relative flex items-center justify-center rounded-xl font-bold transition-all duration-300 ease-out group overflow-hidden ${
-                        (isScrolled && !isNavHovered) ? 'px-2 py-1.5 text-sm' : 'px-4 py-2.5 text-base'
+                      className={`relative flex items-center justify-center rounded-lg font-medium transition-all whitespace-nowrap overflow-hidden ${
+                        (isScrolled && !isNavHovered) ? 'px-2 py-2 text-sm' : 'px-4 py-2.5 text-base'
                       } ${
                         isItemActive
-                          ? 'text-white bg-gradient-to-r from-primary-500 to-secondary-500 shadow-lg shadow-primary-500/25'
-                          : 'text-gray-700 hover:text-primary-600 hover:bg-gradient-to-r hover:from-primary-50 hover:to-secondary-50'
+                          ? 'text-white bg-gradient-to-r from-primary-500 to-secondary-500 shadow-lg'
+                          : 'text-gray-700 hover:text-primary-600 hover:bg-primary-50'
                       }`}
                     >
                       <motion.div
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        className="flex items-center relative z-10"
-                        transition={{ duration: 0.15 }}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="flex items-center"
                       >
-                        {/* Active background with smooth morphing */}
                         {isItemActive && (
                           <motion.div
                             layoutId="activeNavBg"
-                            className="absolute inset-0 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-xl -z-10"
-                            transition={{ 
-                              type: "spring", 
-                              stiffness: 400, 
-                              damping: 30
-                            }}
+                            className="absolute inset-0 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg"
+                            transition={{ type: "spring", stiffness: 400, damping: 30 }}
                           />
                         )}
-                        
-                        {/* Icon with subtle animation */}
                         <motion.div
-                          className="flex-shrink-0"
-                          animate={{
-                            scale: (isScrolled && !isNavHovered) ? 1.05 : 1,
-                          }}
-                          whileHover={{ scale: 1.1 }}
-                          transition={{ duration: 0.2 }}
+                          className="relative z-10 flex-shrink-0"
+                          whileHover={{ rotate: 360, scale: 1.1 }}
+                          transition={{ duration: 0.5 }}
                         >
-                          <item.icon className={`w-4 h-4 ${isItemActive ? 'text-white' : ''}`} />
+                          <item.icon className="w-5 h-5" />
                         </motion.div>
-                        
-                        {/* Smooth text animation */}
                         <motion.div
-                          className="overflow-hidden whitespace-nowrap"
+                          className="relative z-10 overflow-hidden"
                           animate={{
                             width: showFullText ? 'auto' : '0px',
                             marginLeft: showFullText ? '8px' : '0px',
                             opacity: showFullText ? 1 : 0,
                           }}
-                          transition={{ 
-                            duration: 0.3, 
-                            ease: "easeInOut"
-                          }}
+                          transition={{ duration: 0.3, ease: "easeInOut" }}
                         >
-                          <span className="block">
-                            {displayText}
+                          <span className="flex flex-col leading-tight text-base">
+                            {item.name.includes('&') || item.name.includes('3D') ? (
+                              <>
+                                <span className="text-xs leading-tight">{item.name.split(' ').slice(0, item.name.split(' ').indexOf('&') + 1).join(' ')}</span>
+                                <span className="text-xs leading-tight">{item.name.split(' ').slice(item.name.split(' ').indexOf('&') + 1).join(' ')}</span>
+                              </>
+                            ) : (
+                              <span className="text-base">{item.name}</span>
+                            )}
                           </span>
                         </motion.div>
                       </motion.div>
-                      
-                      {/* Enhanced hover underline */}
                       <motion.div
                         className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full"
                         initial={{ scaleX: 0 }}
@@ -409,32 +358,14 @@ const Navbar = () => {
             })}
           </div>
 
-          {/* Enhanced Mobile menu button */}
-          <motion.div
-            animate={{
-              opacity: (isScrolled && !isNavHovered) ? 0 : 1,
-              x: (isScrolled && !isNavHovered) ? 200 : 0,
-              scale: (isScrolled && !isNavHovered) ? 0.8 : 1
-            }}
-            transition={{ 
-              duration: 0.5, 
-              ease: [0.4, 0, 0.2, 1]
-            }}
-            className={`lg:hidden ${(isScrolled && !isNavHovered) ? 'absolute pointer-events-none' : ''} origin-right`}
-          >
+          {/* Mobile Menu Button */}
+          <div className="lg:hidden">
             <motion.button
               onClick={toggleMenu}
-              className="relative p-3 rounded-xl text-gray-600 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 transition-all duration-300 group"
-              aria-label="Toggle menu"
+              className="p-2 rounded-lg text-gray-700 hover:bg-gray-100"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              transition={{ duration: 0.2 }}
             >
-              {/* Animated background */}
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-xl opacity-0 group-hover:opacity-10 transition-opacity duration-300"
-              />
-              
               <AnimatePresence mode="wait">
                 {isOpen ? (
                   <motion.div
@@ -444,7 +375,7 @@ const Navbar = () => {
                     exit={{ rotate: 90, opacity: 0 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <FaTimes className="w-6 h-6 relative z-10" />
+                    <FaTimes className="w-5 h-5" />
                   </motion.div>
                 ) : (
                   <motion.div
@@ -454,26 +385,16 @@ const Navbar = () => {
                     exit={{ rotate: -90, opacity: 0 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <FaBars className="w-6 h-6 relative z-10" />
+                    <FaBars className="w-5 h-5" />
                   </motion.div>
                 )}
               </AnimatePresence>
-              
-              {/* Enhanced pulse effect */}
-              <motion.div
-                className="absolute inset-0 rounded-xl border-2 border-primary-500 opacity-0"
-                animate={isOpen ? { 
-                  scale: [1, 1.3, 1],
-                  opacity: [0.6, 0, 0.6]
-                } : {}}
-                transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
-              />
             </motion.button>
-          </motion.div>
+          </div>
         </div>
       </div>
 
-      {/* Enhanced Mobile Navigation */}
+      {/* Mobile Navigation */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -532,12 +453,19 @@ const Navbar = () => {
                       
                       {/* Text with slide effect */}
                       <motion.span 
-                        className="relative z-10"
+                        className="relative z-10 flex flex-col leading-tight text-base"
                         initial={{ x: 0 }}
                         whileHover={{ x: 5 }}
                         transition={{ duration: 0.2 }}
                       >
-                        {item.displayName || item.name}
+                        {item.name.includes('&') || item.name.includes('3D') ? (
+                          <>
+                            <span className="text-sm leading-tight">{item.name.split(' ').slice(0, item.name.split(' ').indexOf('&') + 1).join(' ')}</span>
+                            <span className="text-sm leading-tight">{item.name.split(' ').slice(item.name.split(' ').indexOf('&') + 1).join(' ')}</span>
+                          </>
+                        ) : (
+                          <span className="text-base">{item.displayName || item.name}</span>
+                        )}
                       </motion.span>
                       
                       {/* External link indicator */}
@@ -604,12 +532,19 @@ const Navbar = () => {
                       
                       {/* Text with slide effect */}
                       <motion.span 
-                        className="relative z-10"
+                        className="relative z-10 flex flex-col leading-tight"
                         initial={{ x: 0 }}
                         whileHover={{ x: 5 }}
                         transition={{ duration: 0.2 }}
                       >
-                        {item.displayName || item.name}
+                        {item.name.includes('&') || item.name.includes('3D') ? (
+                          <>
+                            <span className="text-sm">{item.name.split(' ').slice(0, item.name.split(' ').indexOf('&') + 1).join(' ')}</span>
+                            <span className="text-sm">{item.name.split(' ').slice(item.name.split(' ').indexOf('&') + 1).join(' ')}</span>
+                          </>
+                        ) : (
+                          <span>{item.displayName || item.name}</span>
+                        )}
                       </motion.span>
                       
                       {/* Arrow indicator */}

@@ -27,7 +27,9 @@ setInterval(() => {
 // General API rate limiter
 const generalRateLimit = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
+  max: 1000, // Very high limit
+  skipSuccessfulRequests: false,
+  skipFailedRequests: false,
   message: {
     success: false,
     message: 'Too many requests from this IP, please try again later.',
@@ -35,12 +37,29 @@ const generalRateLimit = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  // Better IP handling for mobile devices and proxies with User-Agent differentiation
+  keyGenerator: (req) => {
+    const forwarded = req.headers['x-forwarded-for'];
+    const ip = forwarded ? forwarded.split(',')[0].trim() : req.ip;
+    
+    const userAgent = req.get('User-Agent') || '';
+    if (userAgent.includes('iPhone') || userAgent.includes('iPad') || userAgent.includes('Android')) {
+      const uaHash = userAgent.split('').reduce((acc, char) => {
+        return ((acc << 5) - acc) + char.charCodeAt(0);
+      }, 0);
+      return `${ip}-mobile-${Math.abs(uaHash) % 10000}`;
+    }
+    
+    return ip;
+  }
 });
 
 // Strict rate limiter for booking endpoint
 const bookingRateLimit = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 5, // Limit each IP to 5 booking requests per hour
+  max: 100, // Increased for testing - allows comprehensive validation
+  skipSuccessfulRequests: false,
+  skipFailedRequests: true, // Don't count failed requests
   message: {
     success: false,
     message: 'Too many booking requests from this IP. Please wait before making another booking.',
@@ -48,31 +67,61 @@ const bookingRateLimit = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  keyGenerator: (req) => {
+    const forwarded = req.headers['x-forwarded-for'];
+    const ip = forwarded ? forwarded.split(',')[0].trim() : req.ip;
+    
+    const userAgent = req.get('User-Agent') || '';
+    if (userAgent.includes('iPhone') || userAgent.includes('iPad') || userAgent.includes('Android')) {
+      const uaHash = userAgent.split('').reduce((acc, char) => {
+        return ((acc << 5) - acc) + char.charCodeAt(0);
+      }, 0);
+      return `${ip}-mobile-${Math.abs(uaHash) % 10000}`;
+    }
+    
+    return ip;
+  }
 });
 
 // Speed limiter - slows down requests after threshold
 const bookingSpeedLimit = slowDown({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  delayAfter: 2, // Allow 2 requests per windowMs at full speed
-  delayMs: 500, // Add 500ms delay per request after delayAfter
+  delayAfter: 10, // Increased from 2 to 10 for better mobile support
+  delayMs: () => 500, // Add 500ms delay per request after delayAfter
   maxDelayMs: 5000, // Maximum delay of 5 seconds
+  validate: { delayMs: false } // Disable delayMs validation warning
 });
 
 // Advanced booking validation middleware
 const advancedBookingLimiter = (req, res, next) => {
-  const clientIP = req.ip || req.connection.remoteAddress;
+  // Get real IP, handling proxies and mobile networks
+  let clientIP = req.ip || req.connection.remoteAddress;
+  const forwarded = req.headers['x-forwarded-for'];
+  if (forwarded) {
+    clientIP = forwarded.split(',')[0].trim();
+  }
+  
+  // For mobile devices, create unique key with user agent hash
+  const userAgent = req.get('User-Agent') || '';
+  if (userAgent.includes('iPhone') || userAgent.includes('iPad') || userAgent.includes('Android')) {
+    const uaHash = userAgent.split('').reduce((acc, char) => {
+      return ((acc << 5) - acc) + char.charCodeAt(0);
+    }, 0);
+    clientIP = `${clientIP}-mobile-${Math.abs(uaHash) % 10000}`;
+  }
+  
   const phone = req.body.phone;
   const now = Date.now();
   
-  // Check IP-based limiting
+  // Check IP-based limiting - very lenient for mobile (increased for testing)
   if (bookingAttempts.has(clientIP)) {
     const ipData = bookingAttempts.get(clientIP);
     
-    // If more than 3 attempts in last hour from same IP
-    if (ipData.count >= 3 && (now - ipData.firstAttempt) < 60 * 60 * 1000) {
+    // If more than 100 attempts in last hour (very lenient for testing)
+    if (ipData.count >= 100 && (now - ipData.firstAttempt) < 60 * 60 * 1000) {
       return res.status(429).json({
         success: false,
-        message: 'Too many booking attempts from your location. Please wait 1 hour before trying again.',
+        message: 'Too many booking attempts. Please wait 1 hour before trying again.',
         retryAfter: new Date(ipData.firstAttempt + 60 * 60 * 1000).toISOString()
       });
     }
@@ -87,16 +136,16 @@ const advancedBookingLimiter = (req, res, next) => {
     bookingAttempts.set(clientIP, { count: 1, firstAttempt: now });
   }
   
-  // Check phone-based limiting
+  // Check phone-based limiting - very lenient (increased for testing)
   if (phone) {
     if (phoneAttempts.has(phone)) {
       const phoneData = phoneAttempts.get(phone);
       
-      // If more than 2 attempts with same phone in last 24 hours
-      if (phoneData.count >= 2 && (now - phoneData.firstAttempt) < 24 * 60 * 60 * 1000) {
+      // If more than 50 attempts with same phone in last 24 hours (very lenient for testing)
+      if (phoneData.count >= 50 && (now - phoneData.firstAttempt) < 24 * 60 * 60 * 1000) {
         return res.status(429).json({
           success: false,
-          message: 'This phone number has already been used for booking recently. Please wait 24 hours or contact us directly.',
+          message: 'This phone number has been used for multiple bookings. Please contact us directly.',
           retryAfter: new Date(phoneData.firstAttempt + 24 * 60 * 60 * 1000).toISOString()
         });
       }

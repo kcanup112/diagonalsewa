@@ -67,7 +67,7 @@ Inquiry form
 
 Google Maps embed
 
-Company contact info (info@diagonal.com,Balkumari Lalitpur,015201768,9851023395
+Company contact info (info@diagonal.com,Balkumari Lalitpur,015201768,9801890011
 
 5. Admin Panel (must)
 View submitted bookings

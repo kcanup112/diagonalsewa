@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from 'react';
-// Cleaned up about team page - removed unnecessary icon imports for cleaner design
+import { 
+  FaLinkedin, 
+  FaPhone, 
+  FaEnvelope,
+  FaUsers,
+  FaGraduationCap,
+  FaAward
+} from 'react-icons/fa';
 
 const AboutTeamPage = () => {
   const [teamMembers, setTeamMembers] = useState([]);
@@ -144,7 +151,7 @@ const AboutTeamPage = () => {
               {/* Work Description as bullets */}
               {selectedMember.workDescription && (
                 <div className="mb-2 w-full">
-                  <h4 className="text-sm font-semibold text-gray-900 mb-1 flex items-center"><span className="mr-2">👥</span>Work Description</h4>
+                  <h4 className="text-sm font-semibold text-gray-900 mb-1 flex items-center"><FaUsers className="w-4 h-4 mr-2 text-blue-600" />Work Description</h4>
                   <ul className="list-disc list-inside text-xs text-gray-700">
                     {selectedMember.workDescription.split(/\.|\n/).filter(Boolean).map((sentence, idx) => (
                       <li key={idx}>{sentence.replace(/^[\s\-]+/, '').replace(/[\u{1F300}-\u{1FAFF}\u{1F1E6}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA70}-\u{1FAFF}\u{1F1E6}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]+/gu, '').trim()}</li>
@@ -191,13 +198,13 @@ const AboutTeamPage = () => {
                   <div className="flex flex-wrap gap-2 justify-center mb-3">
                     {member.qualifications && Array.isArray(member.qualifications) && member.qualifications.length > 0 && (
                       <span className="flex items-center bg-blue-50 text-blue-700 text-xs px-2 py-1 rounded-full">
-                        <span className="mr-1">🎓</span>
+                        <FaGraduationCap className="w-3 h-3 mr-1" />
                         {member.qualifications.slice(0,2).join(', ')}{member.qualifications.length > 2 ? ' +' + (member.qualifications.length - 2) + ' more' : ''}
                       </span>
                     )}
                     {member.certifications && Array.isArray(member.certifications) && member.certifications.length > 0 && (
                       <span className="flex items-center bg-yellow-50 text-yellow-700 text-xs px-2 py-1 rounded-full">
-                        <span className="mr-1">🏆</span>
+                        <FaAward className="w-3 h-3 mr-1" />
                         {member.certifications.slice(0,2).join(', ')}{member.certifications.length > 2 ? ' +' + (member.certifications.length - 2) + ' more' : ''}
                       </span>
                     )}
@@ -207,7 +214,7 @@ const AboutTeamPage = () => {
                   {member.workDescription && (
                     <div className="mb-2">
                       <span className="inline-flex items-center bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full">
-                        <span className="mr-1">👥</span>
+                        <FaUsers className="w-3 h-3 mr-1" />
                         {member.workDescription.length > 60 ? member.workDescription.substring(0, 60) + '...' : member.workDescription}
                       </span>
                     </div>
@@ -216,13 +223,13 @@ const AboutTeamPage = () => {
                   {/* Contact Info */}
                   <div className="flex justify-center gap-4 border-t pt-3 mt-auto">
                     <a href={`mailto:${member.email}`} title="Email" className="text-blue-600 hover:text-blue-800">
-                      <span className="w-5 h-5 flex items-center justify-center">✉️</span>
+                      <FaEnvelope className="w-5 h-5" />
                     </a>
                     <a href={`tel:${member.phone}`} title="Phone" className="text-blue-600 hover:text-blue-800">
-                      <span className="w-5 h-5 flex items-center justify-center">📞</span>
+                      <FaPhone className="w-5 h-5" />
                     </a>
                     <a href="#" title="LinkedIn" className="text-blue-600 hover:text-blue-800">
-                      <span className="w-5 h-5 flex items-center justify-center">💼</span>
+                      <FaLinkedin className="w-5 h-5" />
                     </a>
                   </div>
                 </div>

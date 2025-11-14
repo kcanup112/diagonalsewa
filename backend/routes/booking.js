@@ -50,7 +50,24 @@ const bookingValidation = [
   body('name')
     .trim()
     .isLength({ min: 2, max: 100 })
-    .withMessage('Name must be between 2 and 100 characters'),
+    .withMessage('Name must be between 2 and 100 characters')
+    .matches(/^[a-zA-Z\u0900-\u097F\s\-'.,]+$/)
+    .withMessage('Name contains invalid characters')
+    .custom(value => {
+      // Detect common SQL injection patterns
+      const sqlPatterns = [
+        /(\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|UNION)\b)/i,
+        /(--|;|\/\*|\*\/|xp_|sp_)/i,
+        /('|\"|`).*(OR|AND).*(=|>|<)/i
+      ];
+      
+      for (const pattern of sqlPatterns) {
+        if (pattern.test(value)) {
+          throw new Error('Invalid characters detected in name');
+        }
+      }
+      return true;
+    }),
   
   body('phone')
     .trim()

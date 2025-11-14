@@ -51,7 +51,13 @@ const validateOffer = [
   body('title').trim().isLength({ min: 3, max: 255 }).withMessage('Title must be 3-255 characters'),
   body('offerType').isIn(['discount', 'promotion', 'special_deal', 'seasonal']).withMessage('Invalid offer type'),
   body('startDate').isISO8601().withMessage('Invalid start date'),
-  body('endDate').isISO8601().withMessage('Invalid end date'),
+  body('endDate').isISO8601().withMessage('Invalid end date')
+    .custom((endDate, { req }) => {
+      if (new Date(endDate) <= new Date(req.body.startDate)) {
+        throw new Error('End date must be after start date');
+      }
+      return true;
+    }),
   body('discountValue').optional().isFloat({ min: 0 }).withMessage('Discount value must be positive'),
   body('priority').optional().isInt({ min: 1, max: 10 }).withMessage('Priority must be between 1-10')
 ];
@@ -125,7 +131,7 @@ router.get('/active', async (req, res) => {
         endDate: { [Op.gte]: now },
         [Op.or]: [
           { usageLimit: null },
-          { usageCount: { [Op.lt]: sequelize.col('usageLimit') } }
+          { usageCount: { [Op.lt]: dbSequelize.col('usageLimit') } }
         ]
       },
       order: [['priority', 'DESC'], ['createdAt', 'DESC']]

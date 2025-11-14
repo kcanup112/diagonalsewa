@@ -3,9 +3,9 @@ const bcrypt = require('bcryptjs');
 module.exports = (sequelize, DataTypes) => {
   const Admin = sequelize.define('Admin', {
     id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true
     },
     username: {
       type: DataTypes.STRING,
@@ -31,8 +31,11 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     role: {
-      type: DataTypes.ENUM('admin', 'manager', 'viewer'),
-      defaultValue: 'admin'
+      type: DataTypes.STRING,
+      defaultValue: 'admin',
+      validate: {
+        isIn: [['admin', 'manager', 'viewer']]
+      }
     },
     isActive: {
       type: DataTypes.BOOLEAN,

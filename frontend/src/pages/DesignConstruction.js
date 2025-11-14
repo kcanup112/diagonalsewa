@@ -1,7 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
-// Removed most icons from content areas for cleaner design - keeping only essential navbar and functional icons
+import { 
+  FaCube, 
+  FaHome, 
+  FaCalendarAlt, 
+  FaChartPie,
+  FaClock,
+  FaCheck,
+  FaChevronRight,
+  FaTimes,
+  FaArrowRight
+} from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
 
 // Components
@@ -80,9 +90,23 @@ const DesignConstruction = () => {
     const searchParams = new URLSearchParams(location.search);
     if (searchParams.get('tab') === 'booking') {
       setActiveTab('booking');
-      toast.success('Welcome! Please fill out the booking form below.');
     }
   }, [location.search]);
+
+  // Scroll to booking section when activeTab changes to 'booking'
+  useEffect(() => {
+    if (activeTab === 'booking') {
+      // Scroll to booking section after a delay to ensure content is rendered
+      setTimeout(() => {
+        const bookingSection = document.getElementById('booking-section');
+        if (bookingSection) {
+          const yOffset = -120; // Offset for fixed header
+          const y = bookingSection.getBoundingClientRect().top + window.pageYOffset + yOffset;
+          window.scrollTo({ top: y, behavior: 'smooth' });
+        }
+      }, 500);
+    }
+  }, [activeTab]);
 
   // Monitor state changes
   useEffect(() => {
@@ -105,13 +129,13 @@ const DesignConstruction = () => {
     const serviceType = serviceTypeMap[service.title] || '3d_design';
     setSelectedService({ ...service, type: serviceType });
     setActiveTab('booking');
-    toast.success(`Selected ${service.title}. Please fill the booking form.`);
+    // Scrolling is handled by the activeTab useEffect
   };
 
   const tabs = [
-    { id: 'services', name: 'Our Services', icon: () => <span>🏗️</span> },
-    { id: 'portfolio', name: 'Portfolio', icon: () => <span>🏠</span> },
-    { id: 'booking', name: 'Book Appointment', icon: () => <span>📅</span> },
+    { id: 'services', name: 'Our Services', icon: FaCube },
+    { id: 'portfolio', name: 'Portfolio', icon: FaHome },
+    { id: 'booking', name: 'Book Appointment', icon: FaCalendarAlt },
   // { id: 'calculator', name: 'Cost Calculator', icon: FaCalculator },
   ];
 
@@ -119,20 +143,17 @@ const DesignConstruction = () => {
     {
       title: '3D Floor Plan Design',
       description: 'Detailed architectural drawings and 3D visualization',
-      features: ['AutoCAD Drawings', '3D Modeling', 'Interior Design', 'Structural Plans'],
-      price: 'Rs50/sq ft'
+      features: ['AutoCAD Drawings', '3D Modeling', 'Interior Design', 'Structural Plans']
     },
     {
       title: 'Full Construction Package',
       description: 'Complete turnkey house construction from start to finish',
-      features: ['Foundation to Roof', 'Quality Materials', 'Skilled Workers', 'Project Management'],
-      price: 'Rs2,200/sq ft'
+      features: ['Foundation to Roof', 'Quality Materials', 'Skilled Workers', 'Project Management']
     },
     {
       title: 'Construction Consultation',
       description: 'Professional advice for your construction project',
-      features: ['Site Analysis', 'Material Selection', 'Cost Estimation', 'Timeline Planning'],
-      price: 'Rs150/hour'
+      features: ['Site Analysis', 'Material Selection', 'Cost Estimation', 'Timeline Planning']
     }
   ];
 
@@ -346,13 +367,10 @@ const DesignConstruction = () => {
                     transition={{ duration: 0.6, delay: index * 0.1 }}
                   >
                     <div className="space-y-6">
-                      <div className="flex items-center justify-between">
+                      <div>
                         <h3 className="text-xl font-heading font-semibold text-gray-900">
                           {service.title}
                         </h3>
-                        <span className="text-lg font-bold text-primary-600">
-                          {service.price}
-                        </span>
                       </div>
 
                       <p className="text-gray-600">{service.description}</p>
@@ -360,7 +378,7 @@ const DesignConstruction = () => {
                       <ul className="space-y-2">
                         {service.features.map((feature, featureIndex) => (
                           <li key={featureIndex} className="flex items-center space-x-2">
-                            <div className="w-2 h-2 bg-secondary-500 rounded-full flex-shrink-0"></div>
+                            <FaCheck className="w-4 h-4 text-secondary-500 flex-shrink-0" />
                             <span className="text-sm text-gray-600">{feature}</span>
                           </li>
                         ))}
@@ -432,7 +450,7 @@ const DesignConstruction = () => {
                           {/* Arrow between steps */}
                           {index < designProcess.length - 1 && (
                             <div className="absolute top-10 -right-8 z-10">
-                              <span className="text-gray-400 text-xl">→</span>
+                              <FaArrowRight className="w-4 h-4 text-gray-400" />
                             </div>
                           )}
                         </div>
@@ -533,7 +551,7 @@ const DesignConstruction = () => {
                           onClick={closeProcessPopup}
                           className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black bg-opacity-20 hover:bg-opacity-40 transition-colors duration-200 flex items-center justify-center"
                         >
-                          <span className="text-white text-lg">×</span>
+                          <FaTimes className="w-4 h-4" />
                         </button>
                         
                         <div className="flex items-center space-x-3 pr-10">
@@ -638,13 +656,14 @@ const DesignConstruction = () => {
               {/* Dynamic Portfolio Display */}
               <CompactPortfolioViewer />
 
+              {/* Full Portfolio Link */}
               <div className="text-center">
                 <button 
                   onClick={() => window.open('/portfolio', '_blank')}
                   className="inline-flex items-center space-x-2 text-primary-600 hover:text-primary-700 font-medium"
                 >
                   <span>View Full Portfolio Gallery</span>
-                  <span>→</span>
+                  <FaChevronRight className="w-4 h-4" />
                 </button>
               </div>
 
@@ -670,6 +689,7 @@ const DesignConstruction = () => {
           {/* Booking Tab */}
           {activeTab === 'booking' && (
             <motion.div 
+              id="booking-section"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5 }}
@@ -686,7 +706,7 @@ const DesignConstruction = () => {
                   {/* Business Hours */}
                   <div className="mt-6 p-6 bg-gradient-to-r from-primary-50 to-secondary-50 border border-primary-200 rounded-xl">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center justify-center space-x-2">
-                      <span className="text-2xl">📅</span>
+                      <FaCalendarAlt className="w-5 h-5 text-primary-600" />
                       <span>Business Hours</span>
                     </h3>
                     <div className="space-y-3">
@@ -720,7 +740,7 @@ const DesignConstruction = () => {
                   {selectedService && (
                     <div className="mt-4 p-4 bg-primary-50 border border-primary-200 rounded-lg">
                       <div className="flex items-center justify-center space-x-2">
-                        <span className="text-green-600 text-xl">✓</span>
+                        <FaCheck className="w-5 h-5 text-primary-600" />
                         <span className="text-primary-800 font-medium">
                           Selected Service: {selectedService.title}
                         </span>

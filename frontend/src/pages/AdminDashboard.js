@@ -15,7 +15,7 @@ import {
   FaDownload,
   FaPlus,
   FaImage,
-  FaDownloadAlt
+  FaSync
   // FaGift // Removed since offers are disabled
 } from 'react-icons/fa';
 
@@ -55,15 +55,12 @@ const AdminDashboard = () => {
   const [viewDetailsModalOpen, setViewDetailsModalOpen] = useState(false);
   const [viewDetailsLoading, setViewDetailsLoading] = useState(false);
 
-  useEffect(() => {
-    // Check if user is admin
-    if (!user || !user.isAdmin) {
-      navigate('/admin/login');
-      return;
-    }
-
-    fetchDashboardData();
-  }, [user, navigate]);
+  const handleLogout = () => {
+    localStorage.removeItem('adminToken');
+    setUser(null);
+    toast.success('Logged out successfully');
+    navigate('/admin/login');
+  };
 
   const fetchDashboardData = async () => {
     try {
@@ -91,12 +88,16 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('adminToken');
-    setUser(null);
-    toast.success('Logged out successfully');
-    navigate('/admin/login');
-  };
+  useEffect(() => {
+    // Check if user is admin
+    if (!user || !user.isAdmin) {
+      navigate('/admin/login');
+      return;
+    }
+
+    fetchDashboardData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, navigate]);
 
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
@@ -342,22 +343,34 @@ const AdminDashboard = () => {
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-              <p className="text-sm text-gray-600">Welcome back, {user?.name || 'Admin'}</p>
+          <div className="py-4">
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+                <p className="text-sm text-gray-600">Welcome back, {user?.name || 'Admin'}</p>
+              </div>
             </div>
-            <div className="flex items-center space-x-4">
-              <button className="btn-outline">
-                <FaDownload className="w-4 h-4 mr-2" />
-                Export Data
+            <div className="mt-[70px] flex items-center justify-end space-x-4">
+              <button 
+                onClick={fetchDashboardData}
+                disabled={isLoading}
+                className="p-2 rounded-full bg-blue-500 hover:bg-blue-600 text-white shadow-md hover:shadow-lg transition-all disabled:opacity-50"
+                title="Refresh bookings"
+              >
+                <FaSync className={`w-5 h-5 ${isLoading ? 'animate-spin' : ''}`} />
+              </button>
+              <button 
+                className="p-2 rounded-full bg-green-500 hover:bg-green-600 text-white shadow-md hover:shadow-lg transition-all"
+                title="Export Data"
+              >
+                <FaDownload className="w-5 h-5" />
               </button>
               <button
                 onClick={handleLogout}
-                className="btn-secondary text-red-600 border-red-300 hover:bg-red-50"
+                className="p-2 rounded-full bg-red-500 hover:bg-red-600 text-white shadow-md hover:shadow-lg transition-all"
+                title="Logout"
               >
-                <FaSignOutAlt className="w-4 h-4 mr-2" />
-                Logout
+                <FaSignOutAlt className="w-5 h-5" />
               </button>
             </div>
           </div>
@@ -587,6 +600,15 @@ const AdminDashboard = () => {
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-semibold text-gray-900">All Bookings</h3>
                 <div className="flex space-x-2">
+                  <button 
+                    onClick={fetchDashboardData}
+                    disabled={isLoading}
+                    className="btn-outline flex items-center"
+                    title="Refresh bookings"
+                  >
+                    <FaSync className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+                    Refresh
+                  </button>
                   <select className="input-field">
                     <option>All Status</option>
                     <option>Pending</option>
@@ -713,13 +735,24 @@ const AdminDashboard = () => {
             <div className="card">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-semibold text-gray-900">Repair Requests</h3>
-                <select className="input-field">
-                  <option>All Priority</option>
-                  <option>Urgent</option>
-                  <option>High</option>
-                  <option>Medium</option>
-                  <option>Low</option>
-                </select>
+                <div className="flex space-x-2">
+                  <button 
+                    onClick={fetchDashboardData}
+                    disabled={isLoading}
+                    className="btn-outline flex items-center"
+                    title="Refresh repair requests"
+                  >
+                    <FaSync className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+                    Refresh
+                  </button>
+                  <select className="input-field">
+                    <option>All Priority</option>
+                    <option>Urgent</option>
+                    <option>High</option>
+                    <option>Medium</option>
+                    <option>Low</option>
+                  </select>
+                </div>
               </div>
               <div className="space-y-4">
                 {(dashboardData.recentAppointments || [])
@@ -872,13 +905,24 @@ const AdminDashboard = () => {
             <div className="card">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-semibold text-gray-900">Contact Messages</h3>
-                <select className="input-field">
-                  <option>All Types</option>
-                  <option>Consultation</option>
-                  <option>3D Design</option>
-                  <option>Full Package</option>
-                  <option>Repair</option>
-                </select>
+                <div className="flex space-x-2">
+                  <button 
+                    onClick={fetchDashboardData}
+                    disabled={isLoading}
+                    className="btn-outline flex items-center"
+                    title="Refresh messages"
+                  >
+                    <FaSync className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+                    Refresh
+                  </button>
+                  <select className="input-field">
+                    <option>All Types</option>
+                    <option>Consultation</option>
+                    <option>3D Design</option>
+                    <option>Full Package</option>
+                    <option>Repair</option>
+                  </select>
+                </div>
               </div>
               <div className="space-y-4">
                 {(dashboardData.recentAppointments || [])

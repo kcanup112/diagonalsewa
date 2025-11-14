@@ -60,10 +60,20 @@ const calculateValidation = [
  * POST /api/calculator/calculate
  * Calculate construction cost and generate timeline
  */
-router.post('/calculate', validate('calculateCost'), async (req, res) => {
+router.post('/calculate', calculateValidation, async (req, res) => {
   const startTime = Date.now();
   
   try {
+    // Check validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation failed',
+        errors: errors.array()
+      });
+    }
+
     const { 
       plinth_area, 
       floors = 1,

@@ -359,7 +359,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Diagonal Construction**
 - **Email**: info@diagonal.com
-- **Phone**: 9851023395, 015201768
+- **Phone**: 9801890011, 015201768
 - **Address**: Balkumari, Lalitpur, Nepal
 
 ## 🔗 Links

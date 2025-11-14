@@ -4,17 +4,32 @@ import { toast } from 'react-hot-toast';
 import DatePicker from 'react-datepicker';
 import imageCompression from 'browser-image-compression';
 import "react-datepicker/dist/react-datepicker.css";
-// Cleaned up repair maintenance page - removed unnecessary icon imports for cleaner design
+import { 
+  FaTools, 
+  FaUpload, 
+  FaCalendar,
+  FaPhone,
+  FaEnvelope,
+  FaMapMarkerAlt,
+  FaPaperPlane,
+  FaSpinner,
+  FaImage,
+  FaTimes,
+  FaCompress,
+  FaHammer,
+  FaScrewdriver,
+  FaWrench
+} from 'react-icons/fa';
 
 import { bookingService } from '../services';
 import { useApp } from '../context/AppContext';
 
-// Animated Tool Icons Component - using emojis for cleaner design
+// Animated Tool Icons Component
 const AnimatedToolIcons = () => {
   const tools = [
-    { emoji: '🔨', delay: 0 },
-    { emoji: '🔧', delay: 0.5 },
-    { emoji: '🪛', delay: 1 }
+    { icon: FaHammer, delay: 0 },
+    { icon: FaScrewdriver, delay: 0.5 },
+    { icon: FaWrench, delay: 1 }
   ];
 
   return (
@@ -35,7 +50,7 @@ const AnimatedToolIcons = () => {
             ease: "easeInOut"
           }}
         >
-          <span className="text-3xl">{Tool.emoji}</span>
+          <Tool.icon className="w-8 h-8 text-white" />
         </motion.div>
       ))}
     </div>
@@ -203,7 +218,6 @@ const RepairMaintenance = () => {
         points: [
           'Tile replacement and repair',
           'Wood floor restoration',
-          'Carpet fixes and cleaning',
           'Flooring installation',
           'Floor leveling'
         ]
@@ -221,7 +235,8 @@ const RepairMaintenance = () => {
           'Waterproofing solutions',
           'Gutter maintenance',
           'Weather protection',
-          'Roof inspections'
+          'Roof inspections',
+          'Underground tank leakage/waterproofing'
         ]
       }
     },
@@ -237,7 +252,9 @@ const RepairMaintenance = () => {
           'Cabinet installation',
           'Furniture fixes',
           'Custom woodwork',
-          'Structural repairs'
+          'Structural repairs',
+          'Modular Kitchen Design & Installation'
+          
         ]
       }
     },
@@ -269,6 +286,21 @@ const RepairMaintenance = () => {
           'Heating system maintenance',
           'Ventilation work',
           'Filter replacements'
+        ]
+      }
+    },
+    { 
+      value: 'repair_maintenance', 
+      label: 'Metal Works', 
+      icon: '🔩',
+      gradient: 'from-gray-700 to-gray-800',
+      tooltip: {
+        title: 'Metal Works Services', 
+        points: [
+          'Metal fabrication',
+          'Welding repairs',
+          'Custom metal designs',
+          'Metal installation'
         ]
       }
     },
@@ -907,7 +939,7 @@ const RepairMaintenance = () => {
                   <label htmlFor="file-upload" className={`cursor-pointer ${isCompressing ? 'opacity-50 cursor-not-allowed' : ''}`}>
                     {isCompressing ? (
                       <>
-                        <span className="w-8 h-8 text-blue-500 mx-auto mb-2 animate-pulse flex items-center justify-center">🗜️</span>
+                        <FaCompress className="w-8 h-8 text-blue-500 mx-auto mb-2 animate-pulse" />
                         <p className="text-blue-600 font-medium">
                           Compressing images...
                         </p>
@@ -917,7 +949,7 @@ const RepairMaintenance = () => {
                       </>
                     ) : (
                       <>
-                        <span className="w-8 h-8 text-gray-400 mx-auto mb-2 flex items-center justify-center">📤</span>
+                        <FaUpload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
                         <p className="text-gray-600">
                           Click to upload photos or drag and drop
                         </p>
@@ -964,7 +996,7 @@ const RepairMaintenance = () => {
                               className="w-full h-full object-cover"
                             />
                           ) : (
-                            <span className="w-8 h-8 text-gray-400 flex items-center justify-center">🖼️</span>
+                            <FaImage className="w-8 h-8 text-gray-400" />
                           )}
                         </div>
                         
@@ -994,7 +1026,7 @@ const RepairMaintenance = () => {
                           onClick={() => removeFile(index)}
                           className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors shadow-lg"
                         >
-                          <span className="w-3 h-3 flex items-center justify-center text-xs">✕</span>
+                          <FaTimes className="w-3 h-3" />
                         </button>
 
                         {/* WebP Badge */}
@@ -1012,7 +1044,7 @@ const RepairMaintenance = () => {
                 {files.length > 0 && (
                   <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                     <div className="flex items-center space-x-2 mb-2">
-                      <span className="w-4 h-4 text-green-600 flex items-center justify-center">🗜️</span>
+                      <FaCompress className="w-4 h-4 text-green-600" />
                       <h4 className="text-sm font-medium text-green-800">Compression Summary</h4>
                     </div>
                     <div className="grid grid-cols-3 gap-4 text-sm">
@@ -1105,7 +1137,7 @@ const RepairMaintenance = () => {
                   showPopperArrow={false}
                   popperPlacement="bottom-start"
                 />
-                <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none flex items-center justify-center">📅</span>
+                <FaCalendar className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none" />
               </div>
               {errors.appointmentDate && (
                 <p className="text-red-500 text-sm mt-1">{errors.appointmentDate}</p>
@@ -1147,7 +1179,7 @@ const RepairMaintenance = () => {
                       className={`input-field pl-10 ${errors.phone ? 'border-red-500' : ''}`}
                       placeholder="9812345678"
                     />
-                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 flex items-center justify-center">📞</span>
+                    <FaPhone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   </div>
                   {errors.phone && (
                     <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
@@ -1167,7 +1199,7 @@ const RepairMaintenance = () => {
                       className={`input-field pl-10 ${errors.email ? 'border-red-500' : ''}`}
                       placeholder="your.email@example.com"
                     />
-                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 flex items-center justify-center">✉️</span>
+                    <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   </div>
                   {errors.email && (
                     <p className="text-red-500 text-sm mt-1">{errors.email}</p>
@@ -1187,7 +1219,7 @@ const RepairMaintenance = () => {
                       className={`input-field pl-10 ${errors.address ? 'border-red-500' : ''}`}
                       placeholder="Property address where service is needed"
                     />
-                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 flex items-center justify-center">📍</span>
+                    <FaMapMarkerAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   </div>
                   {errors.address && (
                     <p className="text-red-500 text-sm mt-1">{errors.address}</p>
@@ -1205,12 +1237,12 @@ const RepairMaintenance = () => {
               >
                 {isSubmitting ? (
                   <>
-                    <span className="w-5 h-5 animate-spin flex items-center justify-center">⏳</span>
+                    <FaSpinner className="w-5 h-5 animate-spin" />
                     <span>Submitting Request...</span>
                   </>
                 ) : (
                   <>
-                    <span className="w-5 h-5 flex items-center justify-center">📧</span>
+                    <FaPaperPlane className="w-5 h-5" />
                     <span>Submit Repair Request</span>
                   </>
                 )}
@@ -1227,21 +1259,21 @@ const RepairMaintenance = () => {
           transition={{ duration: 0.6, delay: 0.4 }}
         >
           <div className="card text-center">
-            <span className="w-8 h-8 text-primary-600 mx-auto mb-4 flex items-center justify-center">📞</span>
+            <FaPhone className="w-8 h-8 text-primary-600 mx-auto mb-4" />
             <h3 className="font-semibold text-gray-900 mb-2">Emergency Hotline</h3>
             <p className="text-gray-600">Available 24/7 for urgent repairs</p>
             <p className="text-primary-600 font-medium mt-2">+977-123-456789</p>
           </div>
 
           <div className="card text-center">
-            <span className="w-8 h-8 text-secondary-600 mx-auto mb-4 flex items-center justify-center">✉️</span>
+            <FaEnvelope className="w-8 h-8 text-secondary-600 mx-auto mb-4" />
             <h3 className="font-semibold text-gray-900 mb-2">Email Support</h3>
             <p className="text-gray-600">Get detailed quotes and estimates</p>
             <p className="text-secondary-600 font-medium mt-2">repairs@constructionco.com</p>
           </div>
 
           <div className="card text-center">
-            <span className="w-8 h-8 text-accent-600 mx-auto mb-4 flex items-center justify-center">📅</span>
+            <FaCalendar className="w-8 h-8 text-accent-600 mx-auto mb-4" />
             <h3 className="font-semibold text-gray-900 mb-2">Response Time</h3>
             <p className="text-gray-600">We respond within 2-4 hours</p>
             <p className="text-accent-600 font-medium mt-2">Same day service available</p>

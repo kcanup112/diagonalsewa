@@ -63,9 +63,9 @@ module.exports = (sequelize, DataTypes) => {
     },
     workDescription: {
       type: DataTypes.TEXT,
-      allowNull: false,
+      allowNull: true,
+      defaultValue: null,
       validate: {
-        notEmpty: true,
         len: [5, 500]
       }
     },

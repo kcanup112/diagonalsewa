@@ -60,21 +60,21 @@ const Footer = () => {
               {/* Social Links */}
               <div className="flex space-x-4">
                 <button
-                  onClick={() => window.open("https://www.facebook.com/kcanup112", "_blank")}
+                  onClick={() => window.open("https://www.facebook.com/profile.php?id=100076428225278", "_blank")}
                   className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-primary-600 transition-colors duration-200"
                   aria-label="Facebook"
                 >
                   <FaFacebook className="w-5 h-5" />
                 </button>
                 <button
-                  onClick={() => window.open("https://www.facebook.com/kcanup112", "_blank")}
+                  onClick={() => window.open("https://www.instagram.com/diagonalgroup/", "_blank")}
                   className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-primary-600 transition-colors duration-200"
                   aria-label="Instagram"
                 >
                   <FaInstagram className="w-5 h-5" />
                 </button>
                 <button
-                  onClick={() => window.open("https://www.facebook.com/kcanup112", "_blank")}
+                  onClick={() => window.open("https://www.facebook.com/profile.php?id=100076428225278", "_blank")}
                   className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-primary-600 transition-colors duration-200"
                   aria-label="LinkedIn"
                 >
@@ -137,7 +137,7 @@ const Footer = () => {
                 <div className="flex items-center space-x-3">
                   <FaPhone className="w-5 h-5 text-primary-400 flex-shrink-0" />
                   <div>
-                    <p className="text-gray-300">9851023395</p>
+                    <p className="text-gray-300">9801890011</p>
                     <p className="text-gray-400 text-sm">015201768</p>
                   </div>
                 </div>

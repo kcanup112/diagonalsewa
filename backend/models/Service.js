@@ -1,9 +1,9 @@
 module.exports = (sequelize, DataTypes) => {
   const Service = sequelize.define('Service', {
     id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true
     },
     name: {
       type: DataTypes.STRING,
@@ -11,8 +11,11 @@ module.exports = (sequelize, DataTypes) => {
       unique: true
     },
     category: {
-      type: DataTypes.ENUM('design', 'construction', 'repair', 'consultation'),
-      allowNull: false
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        isIn: [['design', 'construction', 'repair', 'consultation']]
+      }
     },
     description: {
       type: DataTypes.TEXT,
