@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
+import imageCompression from 'browser-image-compression';
 import { 
   FaImage, 
   FaUpload, 
@@ -117,8 +118,62 @@ const GalleryManagement = () => {
 
       try {
         setUploading(true);
+        
+        // Compress image before upload
+        const options = {
+          maxSizeMB: 1,
+          maxWidthOrHeight: 1920,
+          useWebWorker: true,
+          initialQuality: 0.8,
+        };
+
+        toast.loading('Compressing image...', { id: 'compress' });
+        
+        let imageToUpload = localUploadForm.image;
+        
+        // Only compress if file is larger than 500KB
+        if (localUploadForm.image.size > 500 * 1024) {
+          try {
+            const compressedBlob = await imageCompression(localUploadForm.image, options);
+            const originalSize = (localUploadForm.image.size / 1024 / 1024).toFixed(2);
+            const compressedSize = (compressedBlob.size / 1024 / 1024).toFixed(2);
+            
+            // Convert blob back to File with original filename and proper type
+            const originalName = localUploadForm.image.name;
+            const fileExtension = originalName.substring(originalName.lastIndexOf('.')).toLowerCase();
+            
+            // Keep original extension if it's a supported format, otherwise use .jpg
+            const supportedExts = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+            const newExtension = supportedExts.includes(fileExtension) ? fileExtension : '.jpg';
+            const newFileName = originalName.substring(0, originalName.lastIndexOf('.')) + newExtension;
+            
+            // Determine proper MIME type based on extension
+            const mimeTypes = {
+              '.jpg': 'image/jpeg',
+              '.jpeg': 'image/jpeg',
+              '.png': 'image/png',
+              '.gif': 'image/gif',
+              '.webp': 'image/webp'
+            };
+            const mimeType = mimeTypes[newExtension] || 'image/jpeg';
+            
+            imageToUpload = new File([compressedBlob], newFileName, {
+              type: mimeType,
+              lastModified: Date.now(),
+            });
+            
+            toast.success(`Compressed from ${originalSize}MB to ${compressedSize}MB`, { id: 'compress' });
+          } catch (compressionError) {
+            console.error('Compression error:', compressionError);
+            toast.dismiss('compress');
+            toast.error('Image compression failed. Uploading original...');
+          }
+        } else {
+          toast.dismiss('compress');
+        }
+
         const formData = new FormData();
-        formData.append('image', localUploadForm.image);
+        formData.append('image', imageToUpload);
         formData.append('title', localUploadForm.title);
         formData.append('description', localUploadForm.description);
         formData.append('alt', localUploadForm.alt);
@@ -185,7 +240,7 @@ const GalleryManagement = () => {
             {/* Image Upload */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Image File * <span className="text-sm text-gray-500">(Max: 10MB)</span>
+                Image File * <span className="text-sm text-gray-500">(Will be auto-compressed for web)</span>
               </label>
               <input
                 type="file"
@@ -193,20 +248,16 @@ const GalleryManagement = () => {
                 onChange={(e) => {
                   const file = e.target.files[0];
                   if (file) {
-                    // Check file size (10MB = 10 * 1024 * 1024 bytes)
-                    if (file.size > 10 * 1024 * 1024) {
-                      toast.error('File size must be less than 10MB. Please choose a smaller image.');
-                      e.target.value = ''; // Clear the input
-                      return;
-                    }
+                    const fileSizeMB = (file.size / 1024 / 1024).toFixed(2);
                     setLocalUploadForm(prev => ({ ...prev, image: file }));
+                    toast.success(`Image selected: ${fileSizeMB}MB (will be compressed)`);
                   }
                 }}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-primary-500 focus:border-primary-500"
                 required
               />
-              <p className="text-sm text-gray-500 mt-1">
-                Supported formats: JPG, PNG, GIF, WebP (Max size: 10MB)
+              <p className="text-xs text-gray-500 mt-1">
+                Images will be automatically compressed while maintaining quality. Original aspect ratio preserved.
               </p>
             </div>
 
