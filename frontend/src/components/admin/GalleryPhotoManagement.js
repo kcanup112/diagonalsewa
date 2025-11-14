@@ -135,9 +135,20 @@ const GalleryPhotoManagement = () => {
         // Only compress if file is larger than 500KB
         if (localUploadForm.image.size > 500 * 1024) {
           try {
-            imageToUpload = await imageCompression(localUploadForm.image, options);
+            const compressedBlob = await imageCompression(localUploadForm.image, options);
             const originalSize = (localUploadForm.image.size / 1024 / 1024).toFixed(2);
-            const compressedSize = (imageToUpload.size / 1024 / 1024).toFixed(2);
+            const compressedSize = (compressedBlob.size / 1024 / 1024).toFixed(2);
+            
+            // Convert blob back to File with original filename
+            const originalName = localUploadForm.image.name;
+            const fileExtension = originalName.substring(originalName.lastIndexOf('.'));
+            const newFileName = originalName.replace(fileExtension, '.jpg'); // Use .jpg since we're converting to JPEG
+            
+            imageToUpload = new File([compressedBlob], newFileName, {
+              type: 'image/jpeg',
+              lastModified: Date.now(),
+            });
+            
             toast.success(`Compressed from ${originalSize}MB to ${compressedSize}MB`, { id: 'compress' });
           } catch (compressionError) {
             console.error('Compression error:', compressionError);
