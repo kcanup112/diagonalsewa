@@ -124,7 +124,6 @@ const GalleryPhotoManagement = () => {
           maxSizeMB: 1, // Max file size in MB
           maxWidthOrHeight: 1920, // Max width or height
           useWebWorker: true,
-          fileType: 'image/jpeg', // Convert to JPEG for better compression
           initialQuality: 0.8, // 80% quality
         };
 
@@ -139,13 +138,27 @@ const GalleryPhotoManagement = () => {
             const originalSize = (localUploadForm.image.size / 1024 / 1024).toFixed(2);
             const compressedSize = (compressedBlob.size / 1024 / 1024).toFixed(2);
             
-            // Convert blob back to File with original filename
+            // Convert blob back to File with original filename and proper type
             const originalName = localUploadForm.image.name;
-            const fileExtension = originalName.substring(originalName.lastIndexOf('.'));
-            const newFileName = originalName.replace(fileExtension, '.jpg'); // Use .jpg since we're converting to JPEG
+            const fileExtension = originalName.substring(originalName.lastIndexOf('.')).toLowerCase();
+            
+            // Keep original extension if it's a supported format, otherwise use .jpg
+            const supportedExts = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+            const newExtension = supportedExts.includes(fileExtension) ? fileExtension : '.jpg';
+            const newFileName = originalName.substring(0, originalName.lastIndexOf('.')) + newExtension;
+            
+            // Determine proper MIME type based on extension
+            const mimeTypes = {
+              '.jpg': 'image/jpeg',
+              '.jpeg': 'image/jpeg',
+              '.png': 'image/png',
+              '.gif': 'image/gif',
+              '.webp': 'image/webp'
+            };
+            const mimeType = mimeTypes[newExtension] || 'image/jpeg';
             
             imageToUpload = new File([compressedBlob], newFileName, {
-              type: 'image/jpeg',
+              type: mimeType,
               lastModified: Date.now(),
             });
             
