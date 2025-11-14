@@ -46,11 +46,20 @@
 
 /* Custom Base Styles */
 @layer base {
+  * {
+    /* Enable hardware acceleration for smooth scrolling */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
   body {
     font-family: 'Source Sans 3', 'DM Sans', system-ui, sans-serif;
     line-height: 1.6;
     font-weight: 400;
     letter-spacing: 0.01em;
+    /* Optimize scroll performance */
+    scroll-behavior: smooth;
+    will-change: scroll-position;
   }
   
   h1, h2, h3, h4, h5, h6 {
