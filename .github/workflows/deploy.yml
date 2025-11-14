@@ -47,7 +47,7 @@ jobs:
           # Install/Update frontend dependencies and build
           cd ../frontend
           npm ci
-          REACT_APP_API_URL=http://diagonalsewa.com npm run build
+          REACT_APP_API_URL=https://diagonalsewa.com npm run build
           
           # Copy build to serve directory (if using static hosting)
           # sudo cp -r build/* /var/www/html/diagonalsewa/ || true
