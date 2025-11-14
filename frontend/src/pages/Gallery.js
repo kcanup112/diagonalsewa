@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { FaImages, FaVideo, FaEye, FaTrash, FaSpinner } from 'react-icons/fa';
 import PhotoSlider from '../components/PhotoSlider';
 import { galleryService } from '../services';
+import { getImageUrl } from '../utils/imageHelper';
 
 const Gallery = () => {
   const [activeTab, setActiveTab] = useState('photos');
@@ -181,7 +182,7 @@ const Gallery = () => {
               <PhotoSlider 
                 title="Project Gallery - Our Best Work"
                 images={featuredPhotos.map(photo => ({
-                  src: photo.url,
+                  src: getImageUrl(photo.url),
                   alt: photo.alt,
                   caption: photo.description
                 }))}
@@ -253,8 +254,8 @@ const Gallery = () => {
                   >
                     <div className="relative h-48 overflow-hidden">
                       <img
-                        src={photo.url}
-                        alt={photo.title}
+                        src={getImageUrl(photo.url)}
+                        alt={photo.alt}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                       />
                       <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">

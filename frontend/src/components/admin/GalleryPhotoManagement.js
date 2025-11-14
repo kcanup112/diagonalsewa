@@ -17,6 +17,7 @@ import {
   FaRegStar
 } from 'react-icons/fa';
 import { galleryService } from '../../services';
+import { getImageUrl } from '../../utils/imageHelper';
 
 const GalleryPhotoManagement = () => {
   const [galleryPhotos, setGalleryPhotos] = useState([]);
@@ -404,7 +405,7 @@ const GalleryPhotoManagement = () => {
             {/* Photo */}
             <div className="aspect-w-16 aspect-h-12 relative">
               <img
-                src={photo.url}
+                src={getImageUrl(photo.url)}
                 alt={photo.alt}
                 className="w-full h-48 object-cover"
                 onError={(e) => {
