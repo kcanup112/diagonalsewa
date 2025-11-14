@@ -10,19 +10,10 @@ export const getImageUrl = (path) => {
     return path;
   }
   
-  // Get backend base URL
-  let backendUrl;
-  
-  if (process.env.REACT_APP_API_URL) {
-    // Use environment variable if set (production)
-    backendUrl = process.env.REACT_APP_API_URL;
-  } else if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    // Development: backend is on port 5000
-    backendUrl = 'http://localhost:5000';
-  } else {
-    // Production fallback: use current origin (same domain)
-    backendUrl = window.location.origin;
-  }
+  // Get backend base URL based on current environment
+  // In production build, REACT_APP_API_URL will be set to http://diagonalsewa.com
+  // In development, it will be undefined and we'll use localhost:5000
+  const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
   
   return `${backendUrl}${path.startsWith('/') ? path : '/' + path}`;
 };
