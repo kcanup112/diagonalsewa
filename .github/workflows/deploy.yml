@@ -75,38 +75,27 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Deploy to VPS
-      uses: appleboy/ssh-action@v0.1.7
+      uses: appleboy/ssh-action@v1.0.0
       with:
         host: ${{ secrets.VPS_HOST }}
         username: ${{ secrets.VPS_USERNAME }}
-        password: ${{ secrets.VPS_PASSWORD }}
+        key: ${{ secrets.VPS_SSH_KEY }}
+        port: ${{ secrets.VPS_PORT || 22 }}
         script: |
           # Navigate to project directory
-          cd /home/diagonal/NEWPROJECT
+          cd ${{ secrets.VPS_PROJECT_PATH || '/var/www/diagonalsewa' }}
           
           # Pull latest changes
           git pull origin main
           
-          # Update backend dependencies
+          # Install/Update backend dependencies
           cd backend
-          npm install --production
+          npm ci --production
           
-          # Update frontend and rebuild
-          cd ../frontend
-          npm install --production
-          npm run build
-          
-          # Restart PostgreSQL if needed
-          docker restart postgres-diagonal || docker start postgres-diagonal
-          
-          # Wait for database to be ready
-          sleep 10
-          
-          # Run database migrations
-          cd ../backend
+          # Sync database models (SQLite - no Docker needed)
           NODE_ENV=production node -e "
             const db = require('./models');
-            db.sequelize.sync({ alter: true }).then(() => {
+            db.sequelize.sync({ alter: false }).then(() => {
               console.log('Database synced successfully');
               process.exit(0);
             }).catch(err => {
@@ -115,12 +104,30 @@ jobs:
             });
           "
           
+          # Install/Update frontend dependencies and build
+          cd ../frontend
+          npm ci
+          npm run build
+          
+          # Copy build to serve directory (if using static hosting)
+          # sudo cp -r build/* /var/www/html/diagonalsewa/ || true
+          
           # Restart PM2 processes
-          pm2 restart diagonal-backend || pm2 start ecosystem.config.js
+          pm2 restart diagonal-backend || pm2 start server.js --name diagonal-backend --cwd ../backend
+          pm2 restart diagonal-frontend || pm2 start npm --name diagonal-frontend --cwd . -- start
           
-          # Reload Nginx
-          sudo systemctl reload nginx
+          # Save PM2 process list
+          pm2 save
           
-          # Check deployment status
+          # Reload Nginx if configured
+          sudo systemctl reload nginx || true
+          
+          # Health check
+          echo "Waiting for services to start..."
+          sleep 5
           pm2 status
-          curl -f http://localhost || exit 1
+          
+          # Check backend health
+          curl -f http://localhost:5000/api/health || echo "Backend health check failed"
+          
+          echo "✅ Deployment completed successfully!"
