@@ -53,8 +53,13 @@ const PhotoSlider = ({ images, title = "3D Design Gallery" }) => {
             initial={{ opacity: 0, x: 100 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -100 }}
-            transition={{ duration: 0.5, ease: "easeInOut" }}
+            transition={{ 
+              duration: 0.3,
+              ease: [0.4, 0, 0.2, 1],
+              opacity: { duration: 0.2 }
+            }}
             className="absolute inset-0"
+            style={{ willChange: 'transform, opacity' }}
           >
             <img
               src={images[currentIndex].src}
@@ -74,10 +79,15 @@ const PhotoSlider = ({ images, title = "3D Design Gallery" }) => {
             {/* Image Overlay with Caption */}
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
               <motion.p 
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
+                transition={{ 
+                  delay: 0.15,
+                  duration: 0.2,
+                  ease: [0.4, 0, 0.2, 1]
+                }}
                 className="text-white text-lg font-medium text-center"
+                style={{ willChange: 'transform, opacity' }}
               >
                 {images[currentIndex].caption}
               </motion.p>
@@ -145,7 +155,11 @@ const PhotoSlider = ({ images, title = "3D Design Gallery" }) => {
             className="bg-gradient-to-r from-teal-600 to-teal-500 h-2 rounded-full"
             initial={{ width: 0 }}
             animate={{ width: `${((currentIndex + 1) / images.length) * 100}%` }}
-            transition={{ duration: 0.3 }}
+            transition={{ 
+              duration: 0.2,
+              ease: [0.4, 0, 0.2, 1]
+            }}
+            style={{ willChange: 'width' }}
           />
         </div>
         <div className="flex justify-between text-xs text-gray-600 mt-2">

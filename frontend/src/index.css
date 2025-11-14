@@ -52,6 +52,22 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
+  /* Force GPU acceleration for transform and opacity animations */
+  img,
+  [class*="motion"],
+  [class*="animate"],
+  [class*="transition"] {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+
+  /* Optimize image rendering */
+  img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+
   body {
     font-family: 'Source Sans 3', 'DM Sans', system-ui, sans-serif;
     line-height: 1.6;
@@ -59,7 +75,10 @@
     letter-spacing: 0.01em;
     /* Optimize scroll performance */
     scroll-behavior: smooth;
-    will-change: scroll-position;
+    overflow-x: hidden;
+    /* Enable hardware acceleration */
+    transform: translateZ(0);
+    -webkit-overflow-scrolling: touch;
   }
   
   h1, h2, h3, h4, h5, h6 {
@@ -154,11 +173,29 @@
   
   .animate-float {
     animation: float 3s ease-in-out infinite;
+    will-change: transform;
   }
   
   .backdrop-blur-custom {
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
+  }
+
+  /* Smooth transition utilities */
+  .transition-smooth {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, opacity;
+  }
+
+  .transition-fast {
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* GPU-accelerated transforms */
+  .gpu-accelerated {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
   }
 }
 
