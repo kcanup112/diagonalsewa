@@ -14,13 +14,13 @@ export const getImageUrl = (path) => {
   let backendUrl;
   
   if (process.env.REACT_APP_API_URL) {
-    // Production: use environment variable
+    // Use environment variable if set (production)
     backendUrl = process.env.REACT_APP_API_URL;
-  } else if (process.env.NODE_ENV === 'development') {
+  } else if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
     // Development: backend is on port 5000
     backendUrl = 'http://localhost:5000';
   } else {
-    // Fallback: use current origin
+    // Production fallback: use current origin (same domain)
     backendUrl = window.location.origin;
   }
   
