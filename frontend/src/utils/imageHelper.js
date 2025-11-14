@@ -10,7 +10,19 @@ export const getImageUrl = (path) => {
     return path;
   }
   
-  // In production, use the API base URL from environment or current domain
-  const apiBase = process.env.REACT_APP_API_URL || window.location.origin;
-  return `${apiBase}${path.startsWith('/') ? path : '/' + path}`;
+  // Get backend base URL
+  let backendUrl;
+  
+  if (process.env.REACT_APP_API_URL) {
+    // Production: use environment variable
+    backendUrl = process.env.REACT_APP_API_URL;
+  } else if (process.env.NODE_ENV === 'development') {
+    // Development: backend is on port 5000
+    backendUrl = 'http://localhost:5000';
+  } else {
+    // Fallback: use current origin
+    backendUrl = window.location.origin;
+  }
+  
+  return `${backendUrl}${path.startsWith('/') ? path : '/' + path}`;
 };
