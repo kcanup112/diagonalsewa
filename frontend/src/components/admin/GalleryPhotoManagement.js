@@ -20,7 +20,7 @@ import { galleryService } from '../../services';
 
 const GalleryPhotoManagement = () => {
   const [galleryPhotos, setGalleryPhotos] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState(['Interior', 'Exterior', 'Commercial', 'Residential', 'Other']);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
@@ -44,7 +44,7 @@ const GalleryPhotoManagement = () => {
         setGalleryPhotos(photosResponse.data);
       }
 
-      if (categoriesResponse.success && categoriesResponse.data) {
+      if (categoriesResponse.success && categoriesResponse.data && categoriesResponse.data.length > 0) {
         setCategories(categoriesResponse.data);
       }
     } catch (error) {
@@ -173,12 +173,14 @@ const GalleryPhotoManagement = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
+        onClick={() => setShowUploadModal(false)}
       >
         <motion.div 
-          className="bg-white rounded-xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto"
+          className="bg-white rounded-xl p-6 max-w-2xl w-full max-h-[85vh] overflow-y-auto"
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
+          onClick={(e) => e.stopPropagation()}
         >
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-semibold text-gray-900">Upload New Gallery Photo</h3>
@@ -214,24 +216,39 @@ const GalleryPhotoManagement = () => {
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-primary-500 focus:border-primary-500"
                 required
               />
-              <p className="text-sm text-gray-500 mt-1">
-                Supported formats: JPG, PNG, GIF, WebP (Max size: 10MB)
-              </p>
             </div>
 
-            {/* Title */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Title *
-              </label>
-              <input
-                type="text"
-                value={localUploadForm.title}
-                onChange={(e) => setLocalUploadForm(prev => ({ ...prev, title: e.target.value }))}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-primary-500 focus:border-primary-500"
-                placeholder="Enter photo title"
-                required
-              />
+            {/* Title and Category in one row */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Title *
+                </label>
+                <input
+                  type="text"
+                  value={localUploadForm.title}
+                  onChange={(e) => setLocalUploadForm(prev => ({ ...prev, title: e.target.value }))}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-primary-500 focus:border-primary-500"
+                  placeholder="Photo title"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Category *
+                </label>
+                <select
+                  value={localUploadForm.category}
+                  onChange={(e) => setLocalUploadForm(prev => ({ ...prev, category: e.target.value }))}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-primary-500 focus:border-primary-500"
+                  required
+                >
+                  {categories.map(category => (
+                    <option key={category} value={category}>{category}</option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             {/* Description */}
@@ -243,8 +260,8 @@ const GalleryPhotoManagement = () => {
                 value={localUploadForm.description}
                 onChange={(e) => setLocalUploadForm(prev => ({ ...prev, description: e.target.value }))}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-primary-500 focus:border-primary-500"
-                rows={3}
-                placeholder="Enter photo description"
+                rows={2}
+                placeholder="Photo description"
                 required
               />
             </div>
@@ -259,26 +276,9 @@ const GalleryPhotoManagement = () => {
                 value={localUploadForm.alt}
                 onChange={(e) => setLocalUploadForm(prev => ({ ...prev, alt: e.target.value }))}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-primary-500 focus:border-primary-500"
-                placeholder="Enter alt text for accessibility"
+                placeholder="Alt text for accessibility"
                 required
               />
-            </div>
-
-            {/* Category */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Category *
-              </label>
-              <select
-                value={localUploadForm.category}
-                onChange={(e) => setLocalUploadForm(prev => ({ ...prev, category: e.target.value }))}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-primary-500 focus:border-primary-500"
-                required
-              >
-                {categories.map(category => (
-                  <option key={category} value={category}>{category}</option>
-                ))}
-              </select>
             </div>
 
             {/* Featured */}

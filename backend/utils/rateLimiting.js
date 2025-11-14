@@ -42,24 +42,6 @@ const generalLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
-  // Use a key generator that includes User-Agent for mobile devices
-  keyGenerator: (req) => {
-    // Handle X-Forwarded-For for proxies and load balancers
-    const forwarded = req.headers['x-forwarded-for'];
-    const ip = forwarded ? forwarded.split(',')[0].trim() : req.ip;
-    
-    // For mobile devices, combine IP with a hash of user agent to differentiate devices
-    const userAgent = req.get('User-Agent') || '';
-    if (userAgent.includes('iPhone') || userAgent.includes('iPad') || userAgent.includes('Android')) {
-      // Create a simple hash from user agent
-      const uaHash = userAgent.split('').reduce((acc, char) => {
-        return ((acc << 5) - acc) + char.charCodeAt(0);
-      }, 0);
-      return `${ip}-mobile-${Math.abs(uaHash) % 10000}`;
-    }
-    
-    return ip;
-  },
   handler: rateLimitHandler
 });
 
@@ -78,20 +60,6 @@ const strictLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req) => {
-    const forwarded = req.headers['x-forwarded-for'];
-    const ip = forwarded ? forwarded.split(',')[0].trim() : req.ip;
-    
-    const userAgent = req.get('User-Agent') || '';
-    if (userAgent.includes('iPhone') || userAgent.includes('iPad') || userAgent.includes('Android')) {
-      const uaHash = userAgent.split('').reduce((acc, char) => {
-        return ((acc << 5) - acc) + char.charCodeAt(0);
-      }, 0);
-      return `${ip}-mobile-${Math.abs(uaHash) % 10000}`;
-    }
-    
-    return ip;
-  },
   handler: rateLimitHandler
 });
 
@@ -110,20 +78,6 @@ const calculationLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req) => {
-    const forwarded = req.headers['x-forwarded-for'];
-    const ip = forwarded ? forwarded.split(',')[0].trim() : req.ip;
-    
-    const userAgent = req.get('User-Agent') || '';
-    if (userAgent.includes('iPhone') || userAgent.includes('iPad') || userAgent.includes('Android')) {
-      const uaHash = userAgent.split('').reduce((acc, char) => {
-        return ((acc << 5) - acc) + char.charCodeAt(0);
-      }, 0);
-      return `${ip}-mobile-${Math.abs(uaHash) % 10000}`;
-    }
-    
-    return ip;
-  },
   handler: rateLimitHandler
 });
 
@@ -142,20 +96,6 @@ const bookingLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req) => {
-    const forwarded = req.headers['x-forwarded-for'];
-    const ip = forwarded ? forwarded.split(',')[0].trim() : req.ip;
-    
-    const userAgent = req.get('User-Agent') || '';
-    if (userAgent.includes('iPhone') || userAgent.includes('iPad') || userAgent.includes('Android')) {
-      const uaHash = userAgent.split('').reduce((acc, char) => {
-        return ((acc << 5) - acc) + char.charCodeAt(0);
-      }, 0);
-      return `${ip}-mobile-${Math.abs(uaHash) % 10000}`;
-    }
-    
-    return ip;
-  },
   handler: rateLimitHandler
 });
 

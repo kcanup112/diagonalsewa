@@ -24,6 +24,7 @@ db.Service = require('./Service')(sequelize, Sequelize);
 db.Admin = require('./Admin')(sequelize, Sequelize);
 db.TeamMember = require('./TeamMember')(sequelize, Sequelize);
 db.Offer = require('./Offer')(sequelize, Sequelize);
+db.Gallery = require('./Gallery')(sequelize, Sequelize);
 
 // Define associations
 db.Appointment.belongsTo(db.Service, { foreignKey: 'serviceId', as: 'service' });

@@ -36,22 +36,7 @@ const generalRateLimit = rateLimit({
     retryAfter: '15 minutes'
   },
   standardHeaders: true,
-  legacyHeaders: false,
-  // Better IP handling for mobile devices and proxies with User-Agent differentiation
-  keyGenerator: (req) => {
-    const forwarded = req.headers['x-forwarded-for'];
-    const ip = forwarded ? forwarded.split(',')[0].trim() : req.ip;
-    
-    const userAgent = req.get('User-Agent') || '';
-    if (userAgent.includes('iPhone') || userAgent.includes('iPad') || userAgent.includes('Android')) {
-      const uaHash = userAgent.split('').reduce((acc, char) => {
-        return ((acc << 5) - acc) + char.charCodeAt(0);
-      }, 0);
-      return `${ip}-mobile-${Math.abs(uaHash) % 10000}`;
-    }
-    
-    return ip;
-  }
+  legacyHeaders: false
 });
 
 // Strict rate limiter for booking endpoint
@@ -66,21 +51,7 @@ const bookingRateLimit = rateLimit({
     retryAfter: '1 hour'
   },
   standardHeaders: true,
-  legacyHeaders: false,
-  keyGenerator: (req) => {
-    const forwarded = req.headers['x-forwarded-for'];
-    const ip = forwarded ? forwarded.split(',')[0].trim() : req.ip;
-    
-    const userAgent = req.get('User-Agent') || '';
-    if (userAgent.includes('iPhone') || userAgent.includes('iPad') || userAgent.includes('Android')) {
-      const uaHash = userAgent.split('').reduce((acc, char) => {
-        return ((acc << 5) - acc) + char.charCodeAt(0);
-      }, 0);
-      return `${ip}-mobile-${Math.abs(uaHash) % 10000}`;
-    }
-    
-    return ip;
-  }
+  legacyHeaders: false
 });
 
 // Speed limiter - slows down requests after threshold

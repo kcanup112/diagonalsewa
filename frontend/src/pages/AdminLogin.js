@@ -94,7 +94,7 @@ const AdminLogin = () => {
     } catch (error) {
       console.error('Login error:', error);
       
-      if (error.errors && Array.isArray(error.errors)) {
+      if (error && error.errors && Array.isArray(error.errors)) {
         const backendErrors = {};
         error.errors.forEach(err => {
           backendErrors[err.path || err.param] = err.msg;
@@ -102,11 +102,11 @@ const AdminLogin = () => {
         setErrors(backendErrors);
         toast.error('Please fix the form errors');
       } else {
-        const errorMessage = error.message || 'Login failed. Please check your credentials.';
+        const errorMessage = (error && error.message) || 'Login failed. Please check your credentials.';
         toast.error(errorMessage);
         
         // If unauthorized, clear the form
-        if (error.status === 401) {
+        if (error && error.status === 401) {
           setFormData({
             username: '',
             password: ''

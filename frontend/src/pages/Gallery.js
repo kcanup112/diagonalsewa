@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FaImages, FaVideo, FaUpload, FaEye, FaTrash, FaPlus, FaSpinner } from 'react-icons/fa';
+import { FaImages, FaVideo, FaEye, FaTrash, FaSpinner } from 'react-icons/fa';
 import PhotoSlider from '../components/PhotoSlider';
 import { galleryService } from '../services';
 
@@ -244,18 +244,6 @@ const Gallery = () => {
 
               {/* Photo Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {/* Upload New Photo Card */}
-                <motion.div
-                  className="bg-white rounded-lg shadow-lg overflow-hidden border-2 border-dashed border-gray-300 hover:border-primary-400 transition-colors duration-300"
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <div className="h-48 flex flex-col items-center justify-center text-gray-400 hover:text-primary-500 transition-colors duration-300">
-                    <FaPlus className="w-12 h-12 mb-2" />
-                    <span className="text-sm font-medium">Upload New Photo</span>
-                  </div>
-                </motion.div>
-
                 {filteredPhotos.map((photo) => (
                   <motion.div
                     key={photo.id}
@@ -296,18 +284,6 @@ const Gallery = () => {
           {activeTab === 'videos' && (
             <div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {/* Upload New Video Card */}
-                <motion.div
-                  className="bg-white rounded-lg shadow-lg overflow-hidden border-2 border-dashed border-gray-300 hover:border-primary-400 transition-colors duration-300"
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <div className="h-48 flex flex-col items-center justify-center text-gray-400 hover:text-primary-500 transition-colors duration-300">
-                    <FaPlus className="w-12 h-12 mb-2" />
-                    <span className="text-sm font-medium">Upload New Video</span>
-                  </div>
-                </motion.div>
-
                 {videos.map((video) => (
                   <motion.div
                     key={video.id}
@@ -346,18 +322,6 @@ const Gallery = () => {
               </div>
             </div>
           )}
-
-          {/* Coming Soon Message */}
-          <div className="text-center mt-12">
-            <div className="bg-accent-100 border border-accent-300 rounded-lg p-6 max-w-md mx-auto">
-              <FaUpload className="w-8 h-8 text-accent-600 mx-auto mb-3" />
-              <h3 className="text-lg font-semibold text-accent-800 mb-2">Upload Functionality Coming Soon</h3>
-              <p className="text-accent-700 text-sm">
-                We're working on implementing the upload feature for photos and videos. 
-                Stay tuned for updates!
-              </p>
-            </div>
-          </div>
         </div>
       </section>
     </div>

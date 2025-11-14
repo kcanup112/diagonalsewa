@@ -5,6 +5,23 @@ import { motion, AnimatePresence } from 'framer-motion';
 const PhotoSlider = ({ images, title = "3D Design Gallery" }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  // Safety check for empty or invalid images
+  if (!images || images.length === 0) {
+    return (
+      <div className="w-full max-w-4xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className="bg-gradient-to-r from-teal-800 to-teal-600 text-white p-4">
+          <h3 className="text-xl font-bold text-center">{title}</h3>
+        </div>
+        <div className="flex items-center justify-center h-96 md:h-[500px] bg-gray-100">
+          <div className="text-center text-gray-500">
+            <p className="text-lg mb-2">No images available</p>
+            <p className="text-sm">Please add some featured photos to display in the slideshow</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const nextSlide = () => {
     setCurrentIndex((prevIndex) => 
       prevIndex === images.length - 1 ? 0 : prevIndex + 1

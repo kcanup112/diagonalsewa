@@ -5,6 +5,7 @@ const fs = require('fs').promises;
 const jwt = require('jsonwebtoken');
 const { AppError } = require('../utils/errors');
 const logger = require('../utils/logger');
+const { Gallery } = require('../models');
 
 const router = express.Router();
 
@@ -240,10 +241,11 @@ router.get('/slideshow', async (req, res, next) => {
   try {
     logger.info('📸 Fetching slideshow images');
     
-    // Sort by position
-    const sortedImages = slideshowImages
-      .filter(img => img.type === 'slideshow')
-      .sort((a, b) => a.position - b.position);
+    // Fetch slideshow images from database
+    const sortedImages = await Gallery.findAll({
+      where: { type: 'slideshow' },
+      order: [['position', 'ASC']]
+    });
 
     res.json({
       success: true,
@@ -269,27 +271,31 @@ router.get('/images', async (req, res, next) => {
     logger.info('🖼️ Fetching all gallery images');
     
     const { type, limit, offset } = req.query;
-    let filteredImages = slideshowImages;
+    
+    // Build query conditions
+    const where = {};
+    if (type) where.type = type;
 
-    if (type) {
-      filteredImages = slideshowImages.filter(img => img.type === type);
-    }
+    // Build query options
+    const options = {
+      where,
+      order: [['position', 'ASC']]
+    };
 
     if (limit) {
-      const start = parseInt(offset) || 0;
-      const end = start + parseInt(limit);
-      filteredImages = filteredImages.slice(start, end);
+      options.limit = parseInt(limit);
+      if (offset) options.offset = parseInt(offset);
     }
 
-    // Sort by position
-    filteredImages.sort((a, b) => a.position - b.position);
+    // Fetch from database
+    const { count, rows: filteredImages } = await Gallery.findAndCountAll(options);
 
     res.json({
       success: true,
       message: 'Gallery images retrieved successfully',
       data: filteredImages,
       count: filteredImages.length,
-      total: slideshowImages.length
+      total: count
     });
 
     logger.info(`✅ Retrieved ${filteredImages.length} gallery images`);
@@ -352,30 +358,26 @@ router.post('/upload', authenticateAdmin, (req, res, next) => {
     // Generate URL for uploaded file
     const imageUrl = `/uploads/gallery/${req.file.filename}`;
 
-    const newImage = {
-      id: getNextId('slideshow'),
+    // Calculate next position
+    let nextPosition = parseInt(position) || 0;
+    if (!position) {
+      const maxPosition = await Gallery.max('position', {
+        where: { type: type || 'slideshow' }
+      });
+      nextPosition = (maxPosition || 0) + 1;
+    }
+
+    // Create new image in database
+    const newImage = await Gallery.create({
       url: imageUrl,
       title: title.trim(),
       description: description.trim(),
       alt: alt.trim(),
-      position: parseInt(position) || slideshowImages.length,
+      position: nextPosition,
       type: type || 'slideshow',
       category: 'Interior', // Default category for slideshow
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    };
-
-    slideshowImages.push(newImage);
-
-    // Reorder positions if needed
-    if (newImage.position < slideshowImages.length - 1) {
-      slideshowImages = slideshowImages.map(img => {
-        if (img.id !== newImage.id && img.position >= newImage.position) {
-          return { ...img, position: img.position + 1, updated_at: new Date().toISOString() };
-        }
-        return img;
-      });
-    }
+      featured: false
+    });
 
     logger.info(`✅ Uploaded new gallery image: ${title}`);
 
@@ -410,30 +412,27 @@ router.put('/images/:id', authenticateAdmin, async (req, res, next) => {
     const imageId = parseInt(req.params.id);
     const { title, description, alt, position } = req.body;
 
-    const imageIndex = slideshowImages.findIndex(img => img.id === imageId);
-    if (imageIndex === -1) {
+    // Find image in database
+    const image = await Gallery.findByPk(imageId);
+    if (!image) {
       return next(new AppError('Image not found', 404));
     }
 
     // Update image details
-    const updatedImage = {
-      ...slideshowImages[imageIndex],
-      updated_at: new Date().toISOString()
-    };
+    const updateData = {};
+    if (title) updateData.title = title.trim();
+    if (description) updateData.description = description.trim();
+    if (alt) updateData.alt = alt.trim();
+    if (position !== undefined) updateData.position = parseInt(position);
 
-    if (title) updatedImage.title = title.trim();
-    if (description) updatedImage.description = description.trim();
-    if (alt) updatedImage.alt = alt.trim();
-    if (position !== undefined) updatedImage.position = parseInt(position);
+    await image.update(updateData);
 
-    slideshowImages[imageIndex] = updatedImage;
-
-    logger.info(`✅ Updated gallery image: ${updatedImage.title}`);
+    logger.info(`✅ Updated gallery image: ${image.title}`);
 
     res.json({
       success: true,
       message: 'Image updated successfully',
-      data: updatedImage
+      data: image
     });
 
   } catch (error) {
@@ -456,39 +455,21 @@ router.put('/images/:id/position', authenticateAdmin, async (req, res, next) => 
       return next(new AppError('Valid position is required', 400));
     }
 
-    const imageIndex = slideshowImages.findIndex(img => img.id === imageId);
-    if (imageIndex === -1) {
+    // Find image in database
+    const image = await Gallery.findByPk(imageId);
+    if (!image) {
       return next(new AppError('Image not found', 404));
     }
 
-    const oldPosition = slideshowImages[imageIndex].position;
     const newPosition = parseInt(position);
-
-    // Update the target image position
-    slideshowImages[imageIndex] = {
-      ...slideshowImages[imageIndex],
-      position: newPosition,
-      updated_at: new Date().toISOString()
-    };
-
-    // Adjust other images' positions
-    slideshowImages = slideshowImages.map(img => {
-      if (img.id !== imageId) {
-        if (newPosition > oldPosition && img.position > oldPosition && img.position <= newPosition) {
-          return { ...img, position: img.position - 1, updated_at: new Date().toISOString() };
-        } else if (newPosition < oldPosition && img.position < oldPosition && img.position >= newPosition) {
-          return { ...img, position: img.position + 1, updated_at: new Date().toISOString() };
-        }
-      }
-      return img;
-    });
+    await image.update({ position: newPosition });
 
     logger.info(`✅ Updated image position: ID ${imageId} to position ${newPosition}`);
 
     res.json({
       success: true,
       message: 'Image position updated successfully',
-      data: slideshowImages[imageIndex]
+      data: image
     });
 
   } catch (error) {
@@ -506,16 +487,15 @@ router.delete('/images/:id', authenticateAdmin, async (req, res, next) => {
   try {
     const imageId = parseInt(req.params.id);
 
-    const imageIndex = slideshowImages.findIndex(img => img.id === imageId);
-    if (imageIndex === -1) {
+    // Find image in database
+    const image = await Gallery.findByPk(imageId);
+    if (!image) {
       return next(new AppError('Image not found', 404));
     }
 
-    const imageToDelete = slideshowImages[imageIndex];
-
     // Delete the physical file if it's an uploaded file
-    if (imageToDelete.url.startsWith('/uploads/')) {
-      const filePath = path.join(__dirname, '../', imageToDelete.url);
+    if (image.url.startsWith('/uploads/')) {
+      const filePath = path.join(__dirname, '../', image.url);
       try {
         await fs.unlink(filePath);
         logger.info(`🗑️ Deleted file: ${filePath}`);
@@ -524,16 +504,10 @@ router.delete('/images/:id', authenticateAdmin, async (req, res, next) => {
       }
     }
 
-    // Remove from array
-    slideshowImages.splice(imageIndex, 1);
+    const deletedTitle = image.title;
+    await image.destroy();
 
-    // Reorder positions
-    slideshowImages = slideshowImages
-      .filter(img => img.position > imageToDelete.position)
-      .map(img => ({ ...img, position: img.position - 1, updated_at: new Date().toISOString() }))
-      .concat(slideshowImages.filter(img => img.position <= imageToDelete.position));
-
-    logger.info(`✅ Deleted gallery image: ${imageToDelete.title}`);
+    logger.info(`✅ Deleted gallery image: ${deletedTitle}`);
 
     res.json({
       success: true,
@@ -559,34 +533,35 @@ router.get('/photos', async (req, res, next) => {
     logger.info('🖼️ Fetching gallery photos');
     
     const { category, featured, limit, offset } = req.query;
-    let filteredImages = galleryImages.filter(img => img.type === 'gallery');
-
-    // Filter by category
+    
+    // Build query conditions
+    const where = { type: 'gallery' };
+    
     if (category && category !== 'All') {
-      filteredImages = filteredImages.filter(img => img.category === category);
+      where.category = category;
     }
-
-    // Filter by featured status
+    
     if (featured === 'true') {
-      filteredImages = filteredImages.filter(img => img.featured === true);
+      where.featured = true;
     }
 
-    // Pagination
-    if (limit) {
-      const start = parseInt(offset) || 0;
-      const end = start + parseInt(limit);
-      filteredImages = filteredImages.slice(start, end);
-    }
+    // Pagination options
+    const options = {
+      where,
+      order: [['position', 'ASC'], ['createdAt', 'DESC']],
+      limit: limit ? parseInt(limit) : undefined,
+      offset: offset ? parseInt(offset) : undefined
+    };
 
-    // Sort by position
-    filteredImages.sort((a, b) => a.position - b.position);
+    // Fetch from database
+    const { count, rows: filteredImages } = await Gallery.findAndCountAll(options);
 
     res.json({
       success: true,
       message: 'Gallery photos retrieved successfully',
       data: filteredImages,
       count: filteredImages.length,
-      total: galleryImages.filter(img => img.type === 'gallery').length
+      total: count
     });
 
     logger.info(`✅ Retrieved ${filteredImages.length} gallery photos`);
@@ -605,7 +580,8 @@ router.get('/categories', async (req, res, next) => {
   try {
     logger.info('📂 Fetching gallery categories');
     
-    const categories = [...new Set(galleryImages.map(img => img.category))].filter(Boolean);
+    // Return predefined categories (matches Gallery model enum)
+    const categories = ['Interior', 'Exterior', 'Commercial', 'Residential', 'Other'];
     
     res.json({
       success: true,
@@ -672,31 +648,26 @@ router.post('/photos/upload', authenticateAdmin, (req, res, next) => {
     // Generate URL for uploaded file
     const imageUrl = `/uploads/gallery/${req.file.filename}`;
 
-    const newImage = {
-      id: getNextId('gallery'),
+    // Get the next position if not provided
+    let nextPosition = parseInt(position) || 0;
+    if (!position) {
+      const maxPosition = await Gallery.max('position', {
+        where: { type: 'gallery', category }
+      });
+      nextPosition = (maxPosition || 0) + 1;
+    }
+
+    // Create gallery entry in database
+    const newImage = await Gallery.create({
       url: imageUrl,
       title: title.trim(),
       description: description.trim(),
       alt: alt.trim(),
       category: category.trim(),
       featured: featured === 'true',
-      position: parseInt(position) || galleryImages.length,
-      type: 'gallery',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    };
-
-    galleryImages.push(newImage);
-
-    // Reorder positions if needed
-    if (newImage.position < galleryImages.length - 1) {
-      galleryImages = galleryImages.map(img => {
-        if (img.id !== newImage.id && img.position >= newImage.position && img.type === 'gallery') {
-          return { ...img, position: img.position + 1, updated_at: new Date().toISOString() };
-        }
-        return img;
-      });
-    }
+      position: nextPosition,
+      type: 'gallery'
+    });
 
     logger.info(`✅ Uploaded new gallery photo: ${title}`);
 
@@ -731,32 +702,29 @@ router.put('/photos/:id', authenticateAdmin, async (req, res, next) => {
     const imageId = parseInt(req.params.id);
     const { title, description, alt, category, featured, position } = req.body;
 
-    const imageIndex = galleryImages.findIndex(img => img.id === imageId);
-    if (imageIndex === -1) {
+    // Find image in database
+    const image = await Gallery.findByPk(imageId);
+    if (!image) {
       return next(new AppError('Gallery photo not found', 404));
     }
 
     // Update image details
-    const updatedImage = {
-      ...galleryImages[imageIndex],
-      updated_at: new Date().toISOString()
-    };
+    const updateData = {};
+    if (title) updateData.title = title.trim();
+    if (description) updateData.description = description.trim();
+    if (alt) updateData.alt = alt.trim();
+    if (category) updateData.category = category.trim();
+    if (featured !== undefined) updateData.featured = featured === 'true' || featured === true;
+    if (position !== undefined) updateData.position = parseInt(position);
 
-    if (title) updatedImage.title = title.trim();
-    if (description) updatedImage.description = description.trim();
-    if (alt) updatedImage.alt = alt.trim();
-    if (category) updatedImage.category = category.trim();
-    if (featured !== undefined) updatedImage.featured = featured === 'true' || featured === true;
-    if (position !== undefined) updatedImage.position = parseInt(position);
+    await image.update(updateData);
 
-    galleryImages[imageIndex] = updatedImage;
-
-    logger.info(`✅ Updated gallery photo: ${updatedImage.title}`);
+    logger.info(`✅ Updated gallery photo: ${image.title}`);
 
     res.json({
       success: true,
       message: 'Gallery photo updated successfully',
-      data: updatedImage
+      data: image
     });
 
   } catch (error) {
@@ -779,39 +747,21 @@ router.put('/photos/:id/position', authenticateAdmin, async (req, res, next) => 
       return next(new AppError('Valid position is required', 400));
     }
 
-    const imageIndex = galleryImages.findIndex(img => img.id === imageId);
-    if (imageIndex === -1) {
+    // Find image in database
+    const image = await Gallery.findByPk(imageId);
+    if (!image) {
       return next(new AppError('Gallery photo not found', 404));
     }
 
-    const oldPosition = galleryImages[imageIndex].position;
     const newPosition = parseInt(position);
-
-    // Update the target image position
-    galleryImages[imageIndex] = {
-      ...galleryImages[imageIndex],
-      position: newPosition,
-      updated_at: new Date().toISOString()
-    };
-
-    // Adjust other images' positions
-    galleryImages = galleryImages.map(img => {
-      if (img.id !== imageId && img.type === 'gallery') {
-        if (newPosition > oldPosition && img.position > oldPosition && img.position <= newPosition) {
-          return { ...img, position: img.position - 1, updated_at: new Date().toISOString() };
-        } else if (newPosition < oldPosition && img.position < oldPosition && img.position >= newPosition) {
-          return { ...img, position: img.position + 1, updated_at: new Date().toISOString() };
-        }
-      }
-      return img;
-    });
+    await image.update({ position: newPosition });
 
     logger.info(`✅ Updated gallery photo position: ID ${imageId} to position ${newPosition}`);
 
     res.json({
       success: true,
       message: 'Gallery photo position updated successfully',
-      data: galleryImages[imageIndex]
+      data: image
     });
 
   } catch (error) {
@@ -829,16 +779,15 @@ router.delete('/photos/:id', authenticateAdmin, async (req, res, next) => {
   try {
     const imageId = parseInt(req.params.id);
 
-    const imageIndex = galleryImages.findIndex(img => img.id === imageId);
-    if (imageIndex === -1) {
+    // Find image in database
+    const image = await Gallery.findByPk(imageId);
+    if (!image) {
       return next(new AppError('Gallery photo not found', 404));
     }
 
-    const imageToDelete = galleryImages[imageIndex];
-
     // Delete the physical file if it's an uploaded file
-    if (imageToDelete.url.startsWith('/uploads/')) {
-      const filePath = path.join(__dirname, '../', imageToDelete.url);
+    if (image.url.startsWith('/uploads/')) {
+      const filePath = path.join(__dirname, '../', image.url);
       try {
         await fs.unlink(filePath);
         logger.info(`🗑️ Deleted file: ${filePath}`);
@@ -847,16 +796,10 @@ router.delete('/photos/:id', authenticateAdmin, async (req, res, next) => {
       }
     }
 
-    // Remove from array
-    galleryImages.splice(imageIndex, 1);
+    const deletedTitle = image.title;
+    await image.destroy();
 
-    // Reorder positions
-    galleryImages = galleryImages
-      .filter(img => img.position > imageToDelete.position && img.type === 'gallery')
-      .map(img => ({ ...img, position: img.position - 1, updated_at: new Date().toISOString() }))
-      .concat(galleryImages.filter(img => img.position <= imageToDelete.position || img.type !== 'gallery'));
-
-    logger.info(`✅ Deleted gallery photo: ${imageToDelete.title}`);
+    logger.info(`✅ Deleted gallery photo: ${deletedTitle}`);
 
     res.json({
       success: true,
