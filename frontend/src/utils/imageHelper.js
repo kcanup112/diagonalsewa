@@ -10,10 +10,14 @@ export const getImageUrl = (path) => {
     return path;
   }
   
-  // Get backend base URL based on current environment
-  // In production build, REACT_APP_API_URL will be set to http://diagonalsewa.com
-  // In development, it will be undefined and we'll use localhost:5000
-  const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+  // In production, use relative URLs so nginx can proxy them
+  // In development, use localhost:5000
+  if (process.env.NODE_ENV === 'production') {
+    // Return relative path - nginx will handle routing
+    return path.startsWith('/') ? path : '/' + path;
+  }
   
+  // Development: use localhost
+  const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
   return `${backendUrl}${path.startsWith('/') ? path : '/' + path}`;
 };
