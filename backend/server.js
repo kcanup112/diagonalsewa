@@ -16,6 +16,7 @@ const sitemapRoutes = require('./routes/sitemap');
 
 // Import new utilities
 const logger = require('./utils/logger');
+const emailService = require('./utils/emailService');
 const { generalLimiter, speedLimiter } = require('./utils/rateLimiting');
 const { AppError } = require('./utils/errors');
 const { healthCheck } = require('./utils/database');
@@ -173,6 +174,10 @@ const startServer = async () => {
     // Sync database models (no alter for production stability)
     await sequelize.sync();
     logger.info('Database models synchronized');
+    
+    // Initialize email service
+    await emailService.initialize();
+    logger.info('Email service initialized');
     
     app.listen(PORT, () => {
       logger.info(`Server is running on port ${PORT}`);

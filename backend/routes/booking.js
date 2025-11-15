@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 
 const { Appointment, Service } = require('../models');
+const emailService = require('../utils/emailService');
 const { bookingLimiter } = require('../utils/rateLimiting');
 const { 
   advancedBookingLimiter, 
@@ -166,6 +167,35 @@ router.post('/',
       message: message || null,
       images,
       status: 'pending'
+    });
+
+    // Send email notifications asynchronously (don't block the response)
+    setImmediate(async () => {
+      try {
+        // Send confirmation email to customer
+        await emailService.sendBookingConfirmation({
+          name,
+          email,
+          phone,
+          serviceType,
+          appointmentDate,
+          message
+        });
+
+        // Send notification to admin
+        await emailService.sendAdminNotification({
+          name,
+          email,
+          phone,
+          serviceType,
+          appointmentDate,
+          message,
+          images
+        });
+      } catch (emailError) {
+        console.error('Email notification error:', emailError);
+        // Don't fail the booking if email fails
+      }
     });
 
     res.status(201).json({
