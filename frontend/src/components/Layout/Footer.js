@@ -46,8 +46,9 @@ const Footer = () => {
                   <span className="text-white font-bold text-xl">D</span>
                 </div>
                 <div>
-                  <h2 className="text-xl font-heading font-bold">Diagonal</h2>
-                  <p className="text-sm text-gray-400">Construction</p>
+                  <h2 className="text-xl font-heading font-bold">Diagonal Sewa</h2>
+                  <p className="text-sm text-gray-400">Construction & 3D Design</p>
+                    <p className="text-sm text-gray-400">Repair & Maintenance</p>
                 </div>
               </div>
               
@@ -117,38 +118,41 @@ const Footer = () => {
             </div>
 
             {/* Contact Info */}
-            <div className="space-y-6">
-              <h3 className="text-lg font-heading font-semibold">Contact Info</h3>
-              
-              <div className="space-y-4">
-                <a
-                  href="https://www.google.com/maps/place/Diagonal+Group/@27.6715447,85.3388551,668m/data=!3m1!1e3!4m14!1m7!3m6!1s0x39eb1943930ad0dd:0x3141b7d0ce03519d!2sDiagonal+Group!8m2!3d27.6715447!4d85.34143!16s%2Fg%2F11j5zhqckt!3m5!1s0x39eb1943930ad0dd:0x3141b7d0ce03519d!8m2!3d27.6715447!4d85.34143!16s%2Fg%2F11j5zhqckt?entry=ttu&g_ep=EgoyMDI1MDgwMy4wIKXMDSoASAFQAw%3D%3D"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-start space-x-3 hover:bg-gray-800 p-2 rounded-lg transition-colors duration-200 group cursor-pointer"
-                >
-                  <FaMapMarkerAlt className="w-5 h-5 text-primary-400 mt-1 flex-shrink-0 group-hover:text-primary-300 transition-colors duration-200" />
-                  <div>
-                    <p className="text-gray-300 group-hover:text-white transition-colors duration-200">Balkumari, Lalitpur</p>
-                    <p className="text-gray-400 text-sm group-hover:text-gray-300 transition-colors duration-200">Nepal</p>
+                  <div className="space-y-6">
+                    <h3 className="text-lg font-heading font-semibold">Contact Info</h3>
+                    
+                    <div className="space-y-4">
+                    <a
+                      href="https://www.google.com/maps/place/Diagonal+Group/@27.6715447,85.3388551,668m/data=!3m1!1e3!4m14!1m7!3m6!1s0x39eb1943930ad0dd:0x3141b7d0ce03519d!2sDiagonal+Group!8m2!3d27.6715447!4d85.34143!16s%2Fg%2F11j5zhqckt!3m5!1s0x39eb1943930ad0dd:0x3141b7d0ce03519d!8m2!3d27.6715447!4d85.34143!16s%2Fg%2F11j5zhqckt?entry=ttu&g_ep=EgoyMDI1MDgwMy4wIKXMDSoASAFQAw%3D%3D"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-start space-x-3 hover:bg-gray-800 p-2 rounded-lg transition-colors duration-200 group cursor-pointer"
+                    >
+                      <FaMapMarkerAlt className="w-5 h-5 text-primary-400 mt-1 flex-shrink-0 group-hover:text-primary-300 transition-colors duration-200" />
+                      <div>
+                      <p className="text-gray-300 group-hover:text-white transition-colors duration-200">Balkumari, Lalitpur</p>
+                      <p className="text-gray-400 text-sm group-hover:text-gray-300 transition-colors duration-200">Nepal</p>
+                      </div>
+                    </a>
+
+                    <div className="flex items-center space-x-3">
+                      <FaPhone className="w-5 h-5 text-primary-400 flex-shrink-0" />
+                      <div>
+                      <p className="text-gray-300">9801890011</p>
+                      <p className="text-gray-400 text-sm">015201768</p>
+                      </div>
+                    </div>
+
+                    <a
+                      href="mailto:diagonalsewa@gmail.com"
+                      className="flex items-center space-x-3 hover:bg-gray-800 p-2 rounded-lg transition-colors duration-200 group"
+                    >
+                      <FaEnvelope className="w-5 h-5 text-primary-400 flex-shrink-0 group-hover:text-primary-300 transition-colors duration-200" />
+                      <p className="text-gray-300 group-hover:text-white transition-colors duration-200">diagonalsewa@gmail.com</p>
+                    </a>
                   </div>
-                </a>
 
-                <div className="flex items-center space-x-3">
-                  <FaPhone className="w-5 h-5 text-primary-400 flex-shrink-0" />
-                  <div>
-                    <p className="text-gray-300">9801890011</p>
-                    <p className="text-gray-400 text-sm">015201768</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-3">
-                  <FaEnvelope className="w-5 h-5 text-primary-400 flex-shrink-0" />
-                  <p className="text-gray-300">info@diagonal.com</p>
-                </div>
-              </div>
-
-              {/* Business Hours */}
+                  {/* Business Hours */}
               <div className="space-y-2">
                 <h4 className="font-medium text-white">Business Hours</h4>
                 <div className="text-sm text-gray-300 space-y-1">
@@ -185,7 +189,7 @@ const Footer = () => {
         <div className="border-t border-gray-800 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-gray-400 text-sm">
-              © {currentYear} Diagonal Enterprises. All rights reserved.
+              © {currentYear} Diagonal Sewa. All rights reserved.
             </p>
             
             <div className="flex space-x-6 text-sm text-gray-400">
@@ -195,9 +199,7 @@ const Footer = () => {
               <Link to="/terms" className="hover:text-white transition-colors duration-200">
                 Terms of Service
               </Link>
-              <Link to="/admin/login" className="hover:text-white transition-colors duration-200">
-                Admin
-              </Link>
+              
             </div>
           </div>
         </div>

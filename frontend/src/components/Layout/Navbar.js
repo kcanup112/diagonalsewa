@@ -207,18 +207,28 @@ const Navbar = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
-                <motion.h1 
+                <motion.h4 
                   className="text-base font-bold text-gray-900 group-hover:text-primary-600 transition-colors leading-tight whitespace-nowrap"
                   whileHover={{ scale: 1.05 }}
                 >
-                  Diagonal Construction
-                </motion.h1>
+                  Diagonal Sewa
+                </motion.h4>
                 <motion.p 
                   className="text-base text-gray-600 group-hover:text-primary-500 transition-colors"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.5, delay: 0.4 }}
                 >
+                  Construction & 3D Design
+                  
+                </motion.p>
+                <motion.p 
+                  className="text-base text-gray-600 group-hover:text-primary-500 transition-colors"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.4 }}
+                >
+                  
                   Repair & Maintenance
                 </motion.p>
               </motion.div>
