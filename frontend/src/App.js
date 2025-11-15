@@ -44,6 +44,9 @@ function App() {
     <HelmetProvider>
       <AppProvider>
         <Router>
+          {/* Tawk.to Live Chat - Outside main container for proper fixed positioning */}
+          <TawkToChat />
+          
           <div className="min-h-screen flex flex-col bg-gray-50">
             <Toaster 
               position="top-right"
@@ -70,9 +73,6 @@ function App() {
             
             {/* Scroll to top on route change */}
             <ScrollToTop />
-            
-            {/* Tawk.to Live Chat */}
-            <TawkToChat />
             
             <main className="flex-grow">
               <Routes>

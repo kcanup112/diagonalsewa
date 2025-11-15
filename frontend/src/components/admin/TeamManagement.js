@@ -5,7 +5,6 @@ import {
   FaEdit, 
   FaTrash, 
   FaUsers, 
-  FaEye,
   FaSave,
   FaTimes,
   FaUpload,

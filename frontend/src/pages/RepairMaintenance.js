@@ -5,7 +5,6 @@ import DatePicker from 'react-datepicker';
 import imageCompression from 'browser-image-compression';
 import "react-datepicker/dist/react-datepicker.css";
 import { 
-  FaTools, 
   FaUpload, 
   FaCalendar,
   FaPhone,
@@ -353,7 +352,7 @@ const RepairMaintenance = () => {
   };
 
   const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, checked } = e.target;
     
     if (name === 'serviceSubTypes') {
       // Handle multiple service selection
@@ -1068,39 +1067,6 @@ const RepairMaintenance = () => {
                   </div>
                 )}
 
-                {/* Upload Stats */}
-                {files.length > 0 && (
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <FaCompress className="w-4 h-4 text-green-600" />
-                      <h4 className="text-sm font-medium text-green-800">Compression Summary</h4>
-                    </div>
-                    <div className="grid grid-cols-3 gap-4 text-sm">
-                      <div className="text-center">
-                        <p className="text-green-600 font-bold">{files.length}</p>
-                        <p className="text-green-700">Files Ready</p>
-                      </div>
-                      <div className="text-center">
-                        <p className="text-green-600 font-bold">
-                          {files.reduce((sum, file) => sum + file.size, 0) < 1024 * 1024 
-                            ? `${(files.reduce((sum, file) => sum + file.size, 0) / 1024).toFixed(0)} KB`
-                            : `${(files.reduce((sum, file) => sum + file.size, 0) / 1024 / 1024).toFixed(1)} MB`
-                          }
-                        </p>
-                        <p className="text-green-700">Total Size</p>
-                      </div>
-                      <div className="text-center">
-                        <p className="text-green-600 font-bold">
-                          {files.filter(f => f.compressionRatio).length > 0 
-                            ? `${Math.round(files.reduce((sum, file) => sum + (file.compressionRatio || 0), 0) / files.filter(f => f.compressionRatio).length)}%`
-                            : 'N/A'
-                          }
-                        </p>
-                        <p className="text-green-700">Avg. Savings</p>
-                      </div>
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
 

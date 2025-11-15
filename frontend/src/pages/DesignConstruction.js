@@ -5,8 +5,6 @@ import {
   FaCube, 
   FaHome, 
   FaCalendarAlt, 
-  FaChartPie,
-  FaClock,
   FaCheck,
   FaChevronRight,
   FaTimes,
@@ -23,12 +21,10 @@ import CompactPortfolioViewer from '../components/Portfolio/CompactPortfolioView
 const DesignConstruction = () => {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState('services'); // Start with services tab
-  const [costData, setCostData] = useState(null);
-  const [timelineData, setTimelineData] = useState(null);
-  const [renderKey, setRenderKey] = useState(0); // Force re-render key
+  const [costData] = useState(null);
+  const [timelineData] = useState(null);
   const [selectedService, setSelectedService] = useState(null); // Track selected service
   const [selectedProcessStep, setSelectedProcessStep] = useState(null); // Track selected process step for popup
-  const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0, clickedX: 0 }); // Track popup position
   const [isScrolled, setIsScrolled] = useState(false); // Track scroll state for collapsible tabs
 
   // Handle scroll for collapsible tabs
@@ -43,37 +39,7 @@ const DesignConstruction = () => {
   }, []);
 
   // Handle process step popup
-  const openProcessPopup = (step, event) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-    
-    // Calculate position above the clicked element with better bounds checking
-    const modalWidth = 320; // Fixed modal width
-    const modalHeight = 400; // Estimated modal height
-    
-    // Calculate horizontal position (centered on clicked element)
-    let leftPosition = rect.left + rect.width / 2 - modalWidth / 2;
-    leftPosition = Math.max(16, Math.min(leftPosition, viewportWidth - modalWidth - 16));
-    
-    // Calculate vertical position (above clicked element with padding)
-    let topPosition = rect.top + scrollTop - modalHeight - 20; // 20px gap above element
-    
-    // If modal would go above viewport, position it below instead
-    if (topPosition < scrollTop + 80) { // 80px for header
-      topPosition = rect.bottom + scrollTop + 20; // Position below with gap
-    }
-    
-    // Ensure modal stays within viewport bounds
-    topPosition = Math.max(scrollTop + 80, Math.min(topPosition, scrollTop + viewportHeight - modalHeight - 20));
-    
-    setPopupPosition({
-      x: leftPosition,
-      y: topPosition,
-      clickedX: rect.left + rect.width / 2 // Store original click position for arrow
-    });
-    
+  const openProcessPopup = (step) => {
     setSelectedProcessStep(step);
   };
 
@@ -111,7 +77,7 @@ const DesignConstruction = () => {
 
   // Monitor state changes
   useEffect(() => {
-    setRenderKey(prev => prev + 1); // Force re-render when data changes
+    // Cost data state monitoring
   }, [costData]);
 
   useEffect(() => {
@@ -457,7 +423,7 @@ const DesignConstruction = () => {
                         <div key={process.step} className="relative z-10">
                           <motion.div
                             className="flex flex-col items-center cursor-pointer group"
-                            onClick={(event) => openProcessPopup(process, event)}
+                            onClick={() => openProcessPopup(process)}
                             initial={{ opacity: 0, y: 50 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5, delay: index * 0.1 }}
@@ -503,7 +469,7 @@ const DesignConstruction = () => {
                       <div key={process.step} className="relative">
                         <motion.div
                           className="flex items-center space-x-4 bg-white rounded-xl p-4 shadow-md hover:shadow-lg cursor-pointer border-2 border-gray-100 hover:border-primary-200 transition-all duration-300"
-                          onClick={(event) => openProcessPopup(process, event)}
+                          onClick={() => openProcessPopup(process)}
                           initial={{ opacity: 0, x: -50 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ duration: 0.5, delay: index * 0.1 }}

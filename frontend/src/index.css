@@ -5,9 +5,8 @@
 /* Import Portfolio Styles */
 @import url('./styles/portfolio.css');
 
-/* Professional Earth Tones Color Theme */
+/* -------------------- COLOR VARIABLES -------------------- */
 :root {
-  /* Primary - Deep Construction Blue */
   --primary-50: #f0f9ff;
   --primary-100: #e0f2fe;
   --primary-200: #bae6fd;
@@ -19,7 +18,6 @@
   --primary-800: #1e3a8a;
   --primary-900: #1e293b;
 
-  /* Secondary - Warm Construction Orange */
   --secondary-50: #fff7ed;
   --secondary-100: #ffedd5;
   --secondary-200: #fed7aa;
@@ -31,7 +29,6 @@
   --secondary-800: #9a3412;
   --secondary-900: #7c2d12;
 
-  /* Accent - Steel Gray */
   --accent-50: #f8fafc;
   --accent-100: #f1f5f9;
   --accent-200: #e2e8f0;
@@ -44,15 +41,13 @@
   --accent-900: #0f172a;
 }
 
-/* Custom Base Styles */
+/* -------------------- BASE -------------------- */
 @layer base {
   * {
-    /* Enable hardware acceleration for smooth scrolling */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Force GPU acceleration for transform and opacity animations */
   img,
   [class*="motion"],
   [class*="animate"],
@@ -62,9 +57,7 @@
     perspective: 1000px;
   }
 
-  /* Optimize image rendering */
   img {
-    image-rendering: -webkit-optimize-contrast;
     image-rendering: crisp-edges;
   }
 
@@ -73,139 +66,84 @@
     line-height: 1.6;
     font-weight: 400;
     letter-spacing: 0.01em;
-    /* Optimize scroll performance */
     scroll-behavior: smooth;
     overflow-x: hidden;
-    /* Enable hardware acceleration */
-    transform: translateZ(0);
-    -webkit-overflow-scrolling: touch;
   }
-  
+
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Montserrat', system-ui, sans-serif;
     font-weight: 600;
     line-height: 1.2;
-    letter-spacing: -0.02em;
-  }
-  
-  .font-display {
-    font-family: 'Montserrat', system-ui, sans-serif;
-    font-weight: 700;
-    letter-spacing: -0.03em;
-  }
-  
-  .font-body {
-    font-family: 'Source Sans 3', system-ui, sans-serif;
-    font-weight: 400;
-    letter-spacing: 0.01em;
-  }
-  
-  .font-ui {
-    font-family: 'DM Sans', system-ui, sans-serif;
-    font-weight: 500;
-    letter-spacing: 0.005em;
   }
 }
 
-/* Custom Components */
+/* -------------------- COMPONENTS -------------------- */
 @layer components {
   .btn-primary {
-    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
   }
-  
+
   .btn-secondary {
-    @apply bg-secondary-600 hover:bg-secondary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-secondary-500 focus:ring-offset-2;
+    @apply bg-secondary-600 hover:bg-secondary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
   }
-  
+
   .btn-outline {
-    @apply border-2 border-primary-600 text-primary-600 hover:bg-primary-600 hover:text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+    @apply border-2 border-primary-600 text-primary-600 hover:bg-primary-600 hover:text-white font-medium py-2 px-4 rounded-lg;
   }
-  
+
   .card {
     @apply bg-white rounded-xl shadow-lg border border-gray-100 p-6;
   }
-  
+
   .input-field {
-    @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-200;
+    @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500;
   }
-  
+
   .section-padding {
     @apply py-16 md:py-24;
   }
-  
+
   .container-custom {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
 }
 
-/* Custom Utilities */
+/* -------------------- UTILITIES -------------------- */
 @layer utilities {
   .text-gradient {
     background: linear-gradient(135deg, #4265d6, #f2ac20);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    background-clip: text;
   }
-  
+
   .bg-gradient-diagonal {
-    background: linear-gradient(135deg, #4265d6 0%, #293855 100%);
+    background: linear-gradient(135deg, #4265d6, #293855);
   }
-  
+
   .bg-gradient-primary {
-    background: linear-gradient(135deg, #4265d6 0%, #c2e7c9 100%);
+    background: linear-gradient(135deg, #4265d6, #c2e7c9);
   }
-  
+
   .bg-gradient-warm {
-    background: linear-gradient(135deg, #f2ac20 0%, #4265d6 100%);
+    background: linear-gradient(135deg, #f2ac20, #4265d6);
   }
-  
+
   .shadow-custom {
     box-shadow: 0 10px 40px -10px rgba(66, 101, 214, 0.3);
   }
-  
-  .shadow-green {
-    box-shadow: 0 10px 40px -10px rgba(194, 231, 201, 0.4);
-  }
-  
-  .shadow-orange {
-    box-shadow: 0 10px 40px -10px rgba(242, 172, 32, 0.3);
-  }
-  
+
   .animate-float {
     animation: float 3s ease-in-out infinite;
-    will-change: transform;
-  }
-  
-  .backdrop-blur-custom {
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-  }
-
-  /* Smooth transition utilities */
-  .transition-smooth {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform, opacity;
-  }
-
-  .transition-fast {
-    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  /* GPU-accelerated transforms */
-  .gpu-accelerated {
-    transform: translateZ(0);
-    backface-visibility: hidden;
-    perspective: 1000px;
   }
 }
 
-/* Custom Animations */
+/* -------------------- ANIMATIONS -------------------- */
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-10px); }
 }
 
-/* Loading Spinner */
+/* -------------------- SPINNER -------------------- */
 .spinner {
   border: 2px solid #f3f4f6;
   border-top: 2px solid #4265d6;
@@ -217,92 +155,35 @@
 
 @keyframes spin {
   0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  100%{ transform: rotate(360deg); }
 }
 
-/* Chart.js Overrides */
-.chart-container {
-  position: relative;
-  height: 300px;
-  width: 100%;
+/* -------------------- OVERRIDES -------------------- */
+
+/* Safe styles for Tawk without overlay issues */
+/* Target Tawk's dynamically generated container - has class 'widget-visible' or random IDs */
+.widget-visible,
+body > div[class*="widget"],
+body > div[id*="tawk"] {
+  bottom: 20px !important;
+  right: 20px !important;
+  left: auto !important;
+  top: auto !important;
+  position: fixed !important;
+  z-index: 999999 !important;
+  transform: none !important;
 }
 
-/* React DatePicker Custom Styles */
-.react-datepicker-wrapper {
-  width: 100%;
+@media (max-width: 768px) {
+  .widget-visible,
+  body > div[class*="widget"],
+  body > div[id*="tawk"] {
+    bottom: 10px !important;
+    right: 10px !important;
+  }
 }
 
-.react-datepicker__input-container input {
-  @apply input-field;
-}
-
-/* Swiper Custom Styles */
-.swiper-pagination-bullet {
-  @apply bg-primary-600;
-}
-
-.swiper-pagination-bullet-active {
-  @apply bg-primary-800;
-}
-
-/* Mobile Menu Animation */
-.mobile-menu-enter {
-  opacity: 0;
-  transform: translateY(-10px);
-}
-
-.mobile-menu-enter-active {
-  opacity: 1;
-  transform: translateY(0);
-  transition: all 300ms ease-in-out;
-}
-
-.mobile-menu-exit {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.mobile-menu-exit-active {
-  opacity: 0;
-  transform: translateY(-10px);
-  transition: all 300ms ease-in-out;
-}
-
-/* Image hover effects */
-.image-hover-effect {
-  transition: transform 0.3s ease-in-out;
-}
-
-.image-hover-effect:hover {
-  transform: scale(1.05);
-}
-
-/* Custom scrollbar */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 8px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: #f1f5f9;
-  border-radius: 4px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
-
-/* Chat Tooltip Animation */
-@keyframes chatPulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
-
+/* ---------- Chat Tooltip ---------- */
 .chat-tooltip {
   animation: chatPulse 2s infinite;
   display: flex !important;
@@ -310,51 +191,13 @@
   gap: 8px !important;
 }
 
+@keyframes chatPulse {
+  0%{ transform: scale(1); }
+  50%{ transform: scale(1.05); }
+  100%{ transform: scale(1); }
+}
+
 .chat-tooltip:hover {
   transform: translateY(-2px) !important;
   box-shadow: 0 6px 25px rgba(0,0,0,0.2) !important;
-}
-
-.chat-tooltip.hidden {
-  opacity: 0.3 !important;
-  pointer-events: none;
-}
-
-/* Custom gradient chat icon */
-.chat-icon {
-  width: 24px;
-  height: 24px;
-  background: linear-gradient(135deg, #ff0080 0%, #ff4040 25%, #ff8000 50%, #ffff00 75%, #00ff80 100%);
-  border-radius: 12px;
-  position: relative;
-  flex-shrink: 0;
-}
-
-.chat-icon::after {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  left: 4px;
-  width: 0;
-  height: 0;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 6px solid #00ff80;
-}
-
-/* Chat dots inside the icon */
-.chat-icon::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 12px;
-  height: 3px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 2px;
-  box-shadow: 
-    -3px 0 rgba(255, 255, 255, 0.9),
-    0 0 rgba(255, 255, 255, 0.9),
-    3px 0 rgba(255, 255, 255, 0.9);
 }

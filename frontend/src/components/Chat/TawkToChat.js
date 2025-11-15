@@ -15,6 +15,22 @@ const TawkToChat = () => {
     // Initialize Tawk_API and Tawk_LoadStart
     window.Tawk_API = window.Tawk_API || {};
     window.Tawk_LoadStart = new Date();
+    
+    // Configure Tawk to render outside normal flow
+    window.Tawk_API.customStyle = {
+      visibility: {
+        desktop: {
+          position: 'br', // bottom-right
+          xOffset: 20,
+          yOffset: 20
+        },
+        mobile: {
+          position: 'br',
+          xOffset: 10,
+          yOffset: 10
+        }
+      }
+    };
 
     // Create and configure the script
     const script = document.createElement('script');

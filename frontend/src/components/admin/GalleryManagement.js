@@ -7,11 +7,9 @@ import {
   FaUpload, 
   FaTrash, 
   FaEdit,
-  FaEye,
   FaPlus,
   FaTimes,
   FaSpinner,
-  FaSave,
   FaArrowUp,
   FaArrowDown
 } from 'react-icons/fa';
@@ -24,7 +22,6 @@ const GalleryManagement = () => {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [editingImage, setEditingImage] = useState(null);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
-  const [draggedItem, setDraggedItem] = useState(null);
 
   useEffect(() => {
     fetchSlideshowImages();
@@ -447,6 +444,78 @@ const GalleryManagement = () => {
 
       {/* Upload Modal */}
       {showUploadModal && <ImageUploadModal />}
+
+      {/* Edit Modal */}
+      {editingImage && (
+        <motion.div 
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 overflow-y-auto"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 my-8">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">Edit Image</h3>
+              <button onClick={() => setEditingImage(null)} className="text-gray-500 hover:text-gray-700">
+                <FaTimes className="w-5 h-5" />
+              </button>
+            </div>
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.target);
+              handleUpdateImage(editingImage.id, {
+                title: formData.get('title'),
+                description: formData.get('description'),
+                alt: formData.get('alt')
+              });
+            }}>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                  <input
+                    type="text"
+                    name="title"
+                    defaultValue={editingImage.title}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                  <textarea
+                    name="description"
+                    rows="3"
+                    defaultValue={editingImage.description}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Alt Text</label>
+                  <input
+                    type="text"
+                    name="alt"
+                    defaultValue={editingImage.alt}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+              <div className="flex space-x-3 mt-6">
+                <button
+                  type="button"
+                  onClick={() => setEditingImage(null)}
+                  className="flex-1 btn-outline"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 btn-primary"
+                >
+                  Update
+                </button>
+              </div>
+            </form>
+          </div>
+        </motion.div>
+      )}
 
       {/* Delete Confirmation */}
       {deleteConfirm && (

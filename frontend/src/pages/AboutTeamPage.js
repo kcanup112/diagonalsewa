@@ -125,69 +125,6 @@ const AboutTeamPage = () => {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {teamMembers.map((member) => (
                 <div key={member.id} className="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-2xl transition-shadow duration-300 flex flex-col h-full cursor-pointer" onClick={() => setSelectedMember(member)}>
-      {/* Modal for full member info */}
-      {selectedMember && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm" onClick={() => setSelectedMember(null)}>
-          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-8 relative text-left" onClick={e => e.stopPropagation()}>
-            <button className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-xl font-bold" onClick={() => setSelectedMember(null)}>&times;</button>
-            <div className="flex flex-col items-start">
-              <img
-                src={selectedMember.profileImage || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face'}
-                alt={selectedMember.name}
-                className="w-28 h-28 rounded-full object-cover border-4 border-blue-100 shadow-md mb-4 self-center"
-                onError={(e) => {
-                  e.target.src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face';
-                }}
-              />
-              <h2 className="text-2xl font-bold text-gray-900 mb-1">{selectedMember.name}</h2>
-              <p className="text-blue-600 font-semibold mb-1">{selectedMember.position}</p>
-              <p className="text-gray-500 text-sm mb-2">{selectedMember.experience}</p>
-              {/* Overview as bullets */}
-              {selectedMember.overview && (
-                <div className="mb-4 w-full">
-                  <h4 className="text-sm font-semibold text-gray-900 mb-1">Overview</h4>
-                  <ul className="list-disc list-inside text-xs text-gray-700">
-                      {selectedMember.overview.split(/\.|\n/).filter(Boolean).map((sentence, idx) => {
-                        const cleanSentence = sentence.replace(/^[\s\-]+/, '').replace(/[\u{1F300}-\u{1FAFF}\u{1F1E6}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA70}-\u{1FAFF}\u{1F1E6}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]+/gu, '').trim();
-                          return <li key={idx}>{cleanSentence}</li>;
-                      })}
-                  </ul>
-                </div>
-              )}
-              {/* Qualifications */}
-              <div className="mb-2 w-full">
-                <h4 className="text-sm font-semibold text-gray-900 mb-1">Qualifications</h4>
-                <ul className="list-disc list-inside text-xs text-gray-700">
-                  {selectedMember.qualifications && Array.isArray(selectedMember.qualifications) && selectedMember.qualifications.length > 0
-                    ? selectedMember.qualifications.map((q, idx) => <li key={idx}>{q.replace(/^[\s\-]+/, '').replace(/[\u{1F300}-\u{1FAFF}\u{1F1E6}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA70}-\u{1FAFF}\u{1F1E6}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]+/gu, '').trim()}</li>)
-                    : <li className="text-gray-400">No qualifications listed.</li>}
-                </ul>
-              </div>
-              {/* Certifications */}
-              <div className="mb-2 w-full">
-                <h4 className="text-sm font-semibold text-gray-900 mb-1">Certifications</h4>
-                <ul className="list-disc list-inside text-xs text-gray-700">
-                  {selectedMember.certifications && Array.isArray(selectedMember.certifications) && selectedMember.certifications.length > 0
-                    ? selectedMember.certifications.map((c, idx) => <li key={idx}>{c.replace(/^[\s\-]+/, '').replace(/[\u{1F300}-\u{1FAFF}\u{1F1E6}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA70}-\u{1FAFF}\u{1F1E6}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]+/gu, '').trim()}</li>)
-                    : <li className="text-gray-400">No certifications listed.</li>}
-                </ul>
-              </div>
-              {/* Work Description as bullets */}
-              {selectedMember.workDescription && (
-                <div className="mb-2 w-full">
-                  <h4 className="text-sm font-semibold text-gray-900 mb-1 flex items-center"><FaUsers className="w-4 h-4 mr-2 text-blue-600" />Work Description</h4>
-                  <ul className="list-disc list-inside text-xs text-gray-700">
-                    {selectedMember.workDescription.split(/\.|\n/).filter(Boolean).map((sentence, idx) => (
-                      <li key={idx}>{sentence.replace(/^[\s\-]+/, '').replace(/[\u{1F300}-\u{1FAFF}\u{1F1E6}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA70}-\u{1FAFF}\u{1F1E6}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]+/gu, '').trim()}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              {/* Contact icons removed as requested */}
-            </div>
-          </div>
-        </div>
-      )}
                   {/* Profile Image */}
                   <div className="mb-4 flex justify-center">
                     <img
@@ -262,6 +199,69 @@ const AboutTeamPage = () => {
           )}
         </div>
       </section>
+
+      {/* Modal for full member info */}
+      {selectedMember && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm" onClick={() => setSelectedMember(null)}>
+          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-8 relative text-left" onClick={e => e.stopPropagation()}>
+            <button className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-xl font-bold" onClick={() => setSelectedMember(null)}>&times;</button>
+            <div className="flex flex-col items-start">
+              <img
+                src={selectedMember.profileImage || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face'}
+                alt={selectedMember.name}
+                className="w-28 h-28 rounded-full object-cover border-4 border-blue-100 shadow-md mb-4 self-center"
+                onError={(e) => {
+                  e.target.src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face';
+                }}
+              />
+              <h2 className="text-2xl font-bold text-gray-900 mb-1">{selectedMember.name}</h2>
+              <p className="text-blue-600 font-semibold mb-1">{selectedMember.position}</p>
+              <p className="text-gray-500 text-sm mb-2">{selectedMember.experience}</p>
+              {/* Overview as bullets */}
+              {selectedMember.overview && (
+                <div className="mb-4 w-full">
+                  <h4 className="text-sm font-semibold text-gray-900 mb-1">Overview</h4>
+                  <ul className="list-disc list-inside text-xs text-gray-700">
+                      {selectedMember.overview.split(/\.|\n/).filter(Boolean).map((sentence, idx) => {
+                        const cleanSentence = sentence.replace(/^[\s\-]+/, '').replace(/[\u{1F300}-\u{1FAFF}\u{1F1E6}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA70}-\u{1FAFF}\u{1F1E6}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]+/gu, '').trim();
+                          return <li key={idx}>{cleanSentence}</li>;
+                      })}
+                  </ul>
+                </div>
+              )}
+              {/* Qualifications */}
+              <div className="mb-2 w-full">
+                <h4 className="text-sm font-semibold text-gray-900 mb-1">Qualifications</h4>
+                <ul className="list-disc list-inside text-xs text-gray-700">
+                  {selectedMember.qualifications && Array.isArray(selectedMember.qualifications) && selectedMember.qualifications.length > 0
+                    ? selectedMember.qualifications.map((q, idx) => <li key={idx}>{q.replace(/^[\s\-]+/, '').replace(/[\u{1F300}-\u{1FAFF}\u{1F1E6}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA70}-\u{1FAFF}\u{1F1E6}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]+/gu, '').trim()}</li>)
+                    : <li className="text-gray-400">No qualifications listed.</li>}
+                </ul>
+              </div>
+              {/* Certifications */}
+              <div className="mb-2 w-full">
+                <h4 className="text-sm font-semibold text-gray-900 mb-1">Certifications</h4>
+                <ul className="list-disc list-inside text-xs text-gray-700">
+                  {selectedMember.certifications && Array.isArray(selectedMember.certifications) && selectedMember.certifications.length > 0
+                    ? selectedMember.certifications.map((c, idx) => <li key={idx}>{c.replace(/^[\s\-]+/, '').replace(/[\u{1F300}-\u{1FAFF}\u{1F1E6}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA70}-\u{1FAFF}\u{1F1E6}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]+/gu, '').trim()}</li>)
+                    : <li className="text-gray-400">No certifications listed.</li>}
+                </ul>
+              </div>
+              {/* Work Description as bullets */}
+              {selectedMember.workDescription && (
+                <div className="mb-2 w-full">
+                  <h4 className="text-sm font-semibold text-gray-900 mb-1 flex items-center"><FaUsers className="w-4 h-4 mr-2 text-blue-600" />Work Description</h4>
+                  <ul className="list-disc list-inside text-xs text-gray-700">
+                    {selectedMember.workDescription.split(/\.|\n/).filter(Boolean).map((sentence, idx) => (
+                      <li key={idx}>{sentence.replace(/^[\s\-]+/, '').replace(/[\u{1F300}-\u{1FAFF}\u{1F1E6}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA70}-\u{1FAFF}\u{1F1E6}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]+/gu, '').trim()}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Call to Action */}
       <section style={{ background: 'rgb(29, 36, 49)', color: 'white' }} className="py-16">

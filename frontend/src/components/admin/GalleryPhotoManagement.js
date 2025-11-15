@@ -11,9 +11,6 @@ import {
   FaPlus,
   FaTimes,
   FaSpinner,
-  FaSave,
-  FaArrowUp,
-  FaArrowDown,
   FaStar,
   FaRegStar
 } from 'react-icons/fa';
@@ -556,6 +553,102 @@ const GalleryPhotoManagement = () => {
 
       {/* Upload Modal */}
       {showUploadModal && <PhotoUploadModal />}
+
+      {/* Edit Photo Modal */}
+      {editingPhoto && (
+        <motion.div 
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 overflow-y-auto p-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          <motion.div 
+            className="bg-white rounded-xl p-6 max-w-md w-full my-8"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">Edit Photo</h3>
+              <button onClick={() => setEditingPhoto(null)} className="text-gray-500 hover:text-gray-700">
+                <FaTimes className="w-5 h-5" />
+              </button>
+            </div>
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.target);
+              handleUpdatePhoto(editingPhoto.id, {
+                title: formData.get('title'),
+                description: formData.get('description'),
+                category: formData.get('category'),
+                featured: formData.get('featured') === 'on'
+              });
+            }}>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                  <input
+                    type="text"
+                    name="title"
+                    defaultValue={editingPhoto.title}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                  <textarea
+                    name="description"
+                    rows="3"
+                    defaultValue={editingPhoto.description}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                  <select
+                    name="category"
+                    defaultValue={editingPhoto.category}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    required
+                  >
+                    {categories.map(cat => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    name="featured"
+                    id="edit-featured"
+                    defaultChecked={editingPhoto.featured}
+                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <label htmlFor="edit-featured" className="ml-2 text-sm text-gray-700">
+                    Mark as Featured
+                  </label>
+                </div>
+              </div>
+              <div className="flex space-x-3 mt-6">
+                <button
+                  type="button"
+                  onClick={() => setEditingPhoto(null)}
+                  className="flex-1 btn-outline"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 btn-primary"
+                >
+                  Update
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        </motion.div>
+      )}
 
       {/* Delete Confirmation Modal */}
       {deleteConfirm && (
