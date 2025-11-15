@@ -1262,14 +1262,14 @@ const RepairMaintenance = () => {
             <FaPhone className="w-8 h-8 text-primary-600 mx-auto mb-4" />
             <h3 className="font-semibold text-gray-900 mb-2">Emergency Hotline</h3>
             <p className="text-gray-600">Available 24/7 for urgent repairs</p>
-            <p className="text-primary-600 font-medium mt-2">+977-123-456789</p>
+            <p className="text-primary-600 font-medium mt-2">9801890011 / 015201768</p>
           </div>
 
           <div className="card text-center">
             <FaEnvelope className="w-8 h-8 text-secondary-600 mx-auto mb-4" />
             <h3 className="font-semibold text-gray-900 mb-2">Email Support</h3>
             <p className="text-gray-600">Get detailed quotes and estimates</p>
-            <p className="text-secondary-600 font-medium mt-2">repairs@constructionco.com</p>
+            <p className="text-secondary-600 font-medium mt-2">info@diagonal.com</p>
           </div>
 
           <div className="card text-center">

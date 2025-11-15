@@ -339,7 +339,7 @@ const Home = React.memo(() => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.6 }}
                 >
-                  {['🏠 3D Design', '🔨 Construction', '🎨 Interior Design', '📋 Project Management'].map((feature, index) => (
+                  {['🏠 3D Design', '🔨 Construction', '🎨 Interior Design', 'Repair & Maintenance'].map((feature, index) => (
                     <span 
                       key={index}
                       className="px-3 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-semibold text-white border border-white/30 hover:bg-white/30 transition-all duration-300"

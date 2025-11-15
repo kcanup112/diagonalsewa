@@ -1,0 +1,21 @@
+const bcrypt = require('bcrypt');
+
+const newPassword = 'StrongerNepal@#56*$'; // Change this to your desir>
+
+bcrypt.hash(newPassword, 10, (err, hash) => {
+  if (err) {
+    console.error('Error:', err);
+    process.exit(1);
+  }
+  console.log('Hashed password:');
+  console.log(hash);
+  process.exit(0);
+});
+
+//open this file using nano <filename.js>
+//change the password
+//run this file using node <filename.js>
+//then copy the hashvalue
+//open database sqlite3 database/diagonal_construction.sqlite
+//update the passwordhash:UPDATE admins SET password = 'PASTE_YOUR_HASHED_PASSWORD_HERE' WHERE username = 'admin';
+//verify the update
