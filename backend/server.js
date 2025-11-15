@@ -12,6 +12,7 @@ const adminRoutes = require('./routes/admin');
 const offersRoutes = require('./routes/offers');
 const galleryRoutes = require('./routes/gallery');
 const portfolioRoutes = require('./routes/portfolios');
+const sitemapRoutes = require('./routes/sitemap');
 
 // Import new utilities
 const logger = require('./utils/logger');
@@ -87,6 +88,9 @@ app.use('/api/offers', offersRoutes);
 app.use('/api/gallery', galleryRoutes);
 app.use('/api/portfolios', portfolioRoutes);
 app.use('/api/team', require('./routes/team'));
+
+// SEO Routes
+app.use('', sitemapRoutes); // Sitemap at /sitemap.xml
 
 // Health check endpoint with database status
 app.get('/api/health', async (req, res) => {

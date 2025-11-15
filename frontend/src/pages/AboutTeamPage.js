@@ -7,6 +7,7 @@ import {
   FaGraduationCap,
   FaAward
 } from 'react-icons/fa';
+import SEOHead from '../components/SEOHead';
 
 const AboutTeamPage = () => {
   const [teamMembers, setTeamMembers] = useState([]);
@@ -36,6 +37,29 @@ const AboutTeamPage = () => {
 
   return (
     <div className="min-h-screen">
+      <SEOHead
+        title="About Our Team | Expert Construction Professionals Nepal - Diagonal Group"
+        description="Meet the expert team at Diagonal Group: experienced architects, civil engineers, project managers, and certified construction professionals in Nepal. 14+ years of combined expertise in construction and 3D design."
+        keywords="construction team Nepal, architects Nepal, civil engineers Kathmandu, construction professionals, expert builders Nepal, certified contractors, project managers Nepal, experienced construction team, Diagonal Group team"
+        canonical="/about-team"
+        schemaMarkup={{
+          '@context': 'https://schema.org',
+          '@type': 'AboutPage',
+          mainEntity: {
+            '@type': 'Organization',
+            name: 'Diagonal Group',
+            description: 'Professional construction and 3D design team in Nepal',
+            employee: {
+              '@type': 'Person',
+              jobTitle: 'Construction Professional'
+            },
+            numberOfEmployees: {
+              '@type': 'QuantitativeValue',
+              value: '20+'
+            }
+          }
+        }}
+      />
       {/* Hidden SEO and Search Keywords for About Team */}
       <div className="sr-only" aria-hidden="true">
         {/* Team Keywords */}

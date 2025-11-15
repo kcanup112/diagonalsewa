@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FaImages, FaVideo, FaEye, FaTrash, FaSpinner } from 'react-icons/fa';
+import SEOHead from '../components/SEOHead';
 import PhotoSlider from '../components/PhotoSlider';
 import { galleryService } from '../services';
 import { getImageUrl } from '../utils/imageHelper';
@@ -61,6 +62,22 @@ const Gallery = () => {
 
   return (
     <div className="min-h-screen">
+      <SEOHead
+        title="Project Gallery & Portfolio | Construction Photos Nepal - Diagonal Group"
+        description="Browse our portfolio of completed construction projects in Nepal: 3D designs, residential houses, corporate buildings, apartments, and commercial projects in Kathmandu. View before and after photos of our quality work."
+        keywords="construction portfolio Nepal, project gallery Kathmandu, completed projects, construction photos, before after photos, residential projects Nepal, commercial construction portfolio, house construction gallery, building photos Nepal"
+        canonical="/gallery"
+        schemaMarkup={{
+          '@context': 'https://schema.org',
+          '@type': 'ImageGallery',
+          name: 'Diagonal Group Project Gallery',
+          description: 'Portfolio of construction and 3D design projects in Nepal',
+          provider: {
+            '@type': 'Organization',
+            name: 'Diagonal Group'
+          }
+        }}
+      />
       {/* Hidden SEO and Search Keywords for Gallery */}
       <div className="sr-only" aria-hidden="true">
         {/* Gallery Keywords */}

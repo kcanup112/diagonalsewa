@@ -1,0 +1,12 @@
+# robots.txt for Diagonal Group - Construction & 3D Design Services
+# https://www.diagonalsewa.com
+
+User-agent: *
+Allow: /
+
+# Disallow admin and private areas
+Disallow: /admin
+Disallow: /api
+
+# Sitemap location
+Sitemap: https://diagonalsewa.com/sitemap.xml

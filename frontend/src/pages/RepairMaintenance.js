@@ -20,6 +20,7 @@ import {
   FaScrewdriver,
   FaWrench
 } from 'react-icons/fa';
+import SEOHead from '../components/SEOHead';
 
 import { bookingService } from '../services';
 import { useApp } from '../context/AppContext';
@@ -606,6 +607,33 @@ const RepairMaintenance = () => {
 
   return (
     <div className="min-h-screen">
+      <SEOHead
+        title="Repair & Maintenance Services Nepal | Plumbing, AC, Remodeling - Diagonal Group"
+        description="Professional repair and maintenance services in Kathmandu: plumbing repair, AC installation & service, bathroom remodeling, waterproofing, electrical work. 24/7 emergency service available for residential and commercial properties."
+        keywords="plumbing repair Nepal, AC service Kathmandu, bathroom remodeling, waterproofing services, electrical repair Nepal, home maintenance, commercial property maintenance, emergency plumbing, AC installation Nepal, repair services Kathmandu"
+        canonical="/repair-maintenance"
+        schemaMarkup={{
+          '@context': 'https://schema.org',
+          '@type': 'Service',
+          serviceType: 'Repair & Maintenance',
+          provider: {
+            '@type': 'Organization',
+            name: 'Diagonal Group'
+          },
+          areaServed: 'Nepal',
+          availableChannel: {
+            '@type': 'ServiceChannel',
+            servicePhone: '+977-9801890011',
+            availableLanguage: 'English, Nepali'
+          },
+          hoursAvailable: {
+            '@type': 'OpeningHoursSpecification',
+            dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+            opens: '00:00',
+            closes: '23:59'
+          }
+        }}
+      />
       {/* Hidden SEO and Search Keywords for Repair & Maintenance */}
       <div className="sr-only" aria-hidden="true">
         {/* Repair Services Keywords */}

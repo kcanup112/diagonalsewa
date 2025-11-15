@@ -14,6 +14,7 @@ import {
 
 import { galleryService } from '../services';
 import { preloadImages, CRITICAL_IMAGES } from '../utils/imageOptimization';
+import SEOHead from '../components/SEOHead';
 
 // Lazy load components
 const SearchBar = lazy(() => import('../components/Search/SearchBarOptimized'));
@@ -146,7 +147,7 @@ const ImageSlideshow = React.memo(() => {
         >
           <img
             src={image.url}
-            alt={image.alt || `Construction showcase ${index + 1}`}
+            alt={image.alt || `Construction and 3D design project showcase ${index + 1} - Diagonal Group Nepal`}
             className="w-full h-full object-cover"
             loading={index === 0 ? 'eager' : 'lazy'} // Eager load first image
             onLoad={() => handleImageLoad(index)}
@@ -280,6 +281,54 @@ const Home = React.memo(() => {
 
   return (
     <div className="min-h-screen">
+      <SEOHead
+        title="Diagonal Group | Corporate Housing, Apartments & Construction Nepal"
+        description="Leading construction company in Nepal specializing in 3D design, corporate housing development, multi-unit apartments, commercial buildings, and repair services in Kathmandu. 14+ years of excellence serving 200+ projects."
+        keywords="construction company Nepal, 3D design Kathmandu, corporate housing Nepal, apartment construction Kathmandu, commercial building Nepal, house construction Nepal, repair maintenance services, plumbing AC services, construction company Lalitpur, residential construction Nepal"
+        canonical="/"
+        schemaMarkup={{
+          '@context': 'https://schema.org',
+          '@type': 'ProfessionalService',
+          name: 'Diagonal Group',
+          description: 'Professional 3D design, construction, corporate housing, and repair services',
+          serviceType: ['3D Architectural Design', 'House Construction', 'Corporate Housing Development', 'Apartment Construction', 'Repair & Maintenance'],
+          areaServed: {
+            '@type': 'State',
+            name: 'Nepal'
+          },
+          hasOfferCatalog: {
+            '@type': 'OfferCatalog',
+            name: 'Construction Services',
+            itemListElement: [
+              {
+                '@type': 'Offer',
+                itemOffered: {
+                  '@type': 'Service',
+                  name: '3D Design & Visualization',
+                  description: 'Complete 3D architectural design and visualization with detailed floor plans'
+                }
+              },
+              {
+                '@type': 'Offer',
+                itemOffered: {
+                  '@type': 'Service',
+                  name: 'Corporate Housing Construction',
+                  description: 'Multi-unit apartment buildings and employee housing complexes'
+                }
+              },
+              {
+                '@type': 'Offer',
+                itemOffered: {
+                  '@type': 'Service',
+                  name: 'Repair & Maintenance',
+                  description: 'Professional plumbing, AC, remodeling, and waterproofing services'
+                }
+              }
+            ]
+          }
+        }}
+      />
+      
       {/* Enhanced Hero Section */}
       <section className="relative text-white overflow-hidden min-h-[80vh] flex items-center pt-36" style={{backgroundColor: '#013b4b'}}>
         {/* Animated Background Pattern */}
@@ -405,7 +454,7 @@ const Home = React.memo(() => {
                 <div className="w-full h-72 lg:h-80 xl:h-96 rounded-2xl overflow-hidden shadow-2xl border-4 border-white/20">
                   <img
                     src="/images/gallery/hero.jpg"
-                    alt="Diagonal Enterprises - Professional Construction & 3D Design"
+                    alt="Diagonal Group - Professional 3D architectural design and construction services in Kathmandu Nepal"
                     className="w-full h-full object-cover"
                   />
                   

@@ -14,6 +14,7 @@ import {
   FaSpinner,
   FaWhatsapp
 } from 'react-icons/fa';
+import SEOHead from '../components/SEOHead';
 
 import { contactService } from '../services/api';
 import { useApp } from '../context/AppContext';
@@ -166,6 +167,34 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen">
+      <SEOHead
+        title="Contact Us | Get in Touch - Diagonal Group Construction Nepal"
+        description="Contact Diagonal Group for construction, 3D design, and repair services in Kathmandu, Nepal. Call +977-9801890011 or email info@diagonal.com for project inquiries, quotes, and consultations."
+        keywords="contact construction company Nepal, Diagonal Group contact, construction inquiry Kathmandu, project quote Nepal, construction consultation, contact builder Nepal, Kathmandu construction company location, emergency repair contact"
+        canonical="/contact"
+        schemaMarkup={{
+          '@context': 'https://schema.org',
+          '@type': 'ContactPage',
+          mainEntity: {
+            '@type': 'Organization',
+            name: 'Diagonal Group',
+            telephone: '+977-9801890011',
+            email: 'info@diagonal.com',
+            address: {
+              '@type': 'PostalAddress',
+              addressLocality: 'Kathmandu',
+              addressCountry: 'NP'
+            },
+            contactPoint: {
+              '@type': 'ContactPoint',
+              telephone: '+977-9801890011',
+              contactType: 'Customer Service',
+              areaServed: 'NP',
+              availableLanguage: ['English', 'Nepali']
+            }
+          }
+        }}
+      />
       {/* Hidden SEO and Search Keywords for Contact */}
       <div className="sr-only" aria-hidden="true">
         {/* Contact Information Keywords */}

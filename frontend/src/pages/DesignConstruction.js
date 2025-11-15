@@ -13,6 +13,7 @@ import {
   FaArrowRight
 } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
+import SEOHead from '../components/SEOHead';
 
 // Components
 import BookingForm from '../components/Forms/BookingForm';
@@ -220,6 +221,44 @@ const DesignConstruction = () => {
       scrollbarWidth: 'none', /* Firefox */
       msOverflowStyle: 'none'  /* Internet Explorer and Edge */
     }}>
+      <SEOHead
+        title="3D Design & Construction Services Nepal | Corporate Housing & Apartments - Diagonal Group"
+        description="Professional 3D architectural design, house construction, corporate office build-out, and multi-unit apartment development in Kathmandu, Nepal. Full turnkey construction services from foundation to finishing."
+        keywords="3D design Nepal, architectural design Kathmandu, house construction Nepal, corporate office construction, apartment building Nepal, residential construction, commercial construction, construction company Kathmandu, building contractor Nepal"
+        canonical="/design-construction"
+        schemaMarkup={{
+          '@context': 'https://schema.org',
+          '@type': 'Service',
+          serviceType: 'Construction & 3D Design',
+          provider: {
+            '@type': 'Organization',
+            name: 'Diagonal Group'
+          },
+          areaServed: 'Nepal',
+          hasOfferCatalog: {
+            '@type': 'OfferCatalog',
+            name: 'Design & Construction Services',
+            itemListElement: [
+              {
+                '@type': 'Offer',
+                itemOffered: {
+                  '@type': 'Service',
+                  name: '3D Architectural Design',
+                  description: 'Complete 3D visualization and floor plans'
+                }
+              },
+              {
+                '@type': 'Offer',
+                itemOffered: {
+                  '@type': 'Service',
+                  name: 'House Construction',
+                  description: 'Full turnkey residential construction services'
+                }
+              }
+            ]
+          }
+        }}
+      />
       <style jsx>{`
         /* Hide scrollbar for Chrome, Safari and Opera */
         ::-webkit-scrollbar {
